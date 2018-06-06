@@ -1,0 +1,22 @@
+{
+  "name": "cortex",
+  "version": "1.0.0",
+  "description": "The beginning of something great",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dGoligorsky/cortex.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dGoligorsky/cortex/issues"
+  },
+  "homepage": "https://github.com/dGoligorsky/cortex#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}

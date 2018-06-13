@@ -1,4 +1,61 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const React = require('react')
+const ReactDOM = require('react-dom')
+
+const styles = {
+  bg: {
+    width: '100%',
+    height: '100%',
+    background: 'rgba(0,0,0,0.5)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 2
+  },
+  inner: {
+    background: 'white',
+    height: '500px',
+    width: '500px',
+    padding: '20px',
+    margin: '20px auto'
+  },
+  btn: {
+    zIndex: 3,
+    position: 'absolute'
+  }
+}
+
+class HelloMessage extends React.Component {
+  constructor () {
+    super()
+    this.state = { open: true }
+  }
+  render () {
+    const opened = (
+      React.createElement("div", {style: styles.bg}, 
+        React.createElement("div", {style: styles.inner}, 
+          "Hello ", this.props.name
+        )
+      )
+    )
+    const closed = React.createElement("div", null)
+    return (
+      React.createElement("div", null, 
+        this.state.open ? opened : closed, 
+        React.createElement("button", {style: styles.btn, onClick: () => this.toggleModalOpen()}, 
+          this.state.open ? 'Close' : 'Open'
+        )
+      )
+    )
+  }
+  toggleModalOpen () {
+    this.setState({ open: !this.state.open })
+  }
+}
+
+ReactDOM.render(React.createElement(HelloMessage, {open: true, name: "Taylor"}), document.body)
+
+},{"react":25,"react-dom":22}],2:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -32,7 +89,7 @@ var ExecutionEnvironment = {
 };
 
 module.exports = ExecutionEnvironment;
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 
 /**
@@ -62,7 +119,7 @@ function camelize(string) {
 }
 
 module.exports = camelize;
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -100,7 +157,7 @@ function camelizeStyleName(string) {
 }
 
 module.exports = camelizeStyleName;
-},{"./camelize":2}],4:[function(require,module,exports){
+},{"./camelize":3}],5:[function(require,module,exports){
 'use strict';
 
 /**
@@ -138,7 +195,7 @@ function containsNode(outerNode, innerNode) {
 }
 
 module.exports = containsNode;
-},{"./isTextNode":12}],5:[function(require,module,exports){
+},{"./isTextNode":13}],6:[function(require,module,exports){
 "use strict";
 
 /**
@@ -175,7 +232,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 };
 
 module.exports = emptyFunction;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -195,7 +252,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = emptyObject;
 }).call(this,require('_process'))
-},{"_process":16}],7:[function(require,module,exports){
+},{"_process":17}],8:[function(require,module,exports){
 'use strict';
 
 /**
@@ -232,7 +289,7 @@ function getActiveElement(doc) /*?DOMElement*/{
 }
 
 module.exports = getActiveElement;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 /**
@@ -263,7 +320,7 @@ function hyphenate(string) {
 }
 
 module.exports = hyphenate;
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -300,7 +357,7 @@ function hyphenateStyleName(string) {
 }
 
 module.exports = hyphenateStyleName;
-},{"./hyphenate":8}],10:[function(require,module,exports){
+},{"./hyphenate":9}],11:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -356,7 +413,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":16}],11:[function(require,module,exports){
+},{"_process":17}],12:[function(require,module,exports){
 'use strict';
 
 /**
@@ -379,7 +436,7 @@ function isNode(object) {
 }
 
 module.exports = isNode;
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 /**
@@ -402,7 +459,7 @@ function isTextNode(object) {
 }
 
 module.exports = isTextNode;
-},{"./isNode":11}],13:[function(require,module,exports){
+},{"./isNode":12}],14:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -468,7 +525,7 @@ function shallowEqual(objA, objB) {
 }
 
 module.exports = shallowEqual;
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
@@ -533,7 +590,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = warning;
 }).call(this,require('_process'))
-},{"./emptyFunction":5,"_process":16}],15:[function(require,module,exports){
+},{"./emptyFunction":6,"_process":17}],16:[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -625,7 +682,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -811,7 +868,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -874,7 +931,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 module.exports = checkPropTypes;
 
 }).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":18,"_process":16,"fbjs/lib/invariant":10,"fbjs/lib/warning":14}],18:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":19,"_process":17,"fbjs/lib/invariant":11,"fbjs/lib/warning":15}],19:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -888,7 +945,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function (process){
 /** @license React v16.4.0
  * react-dom.development.js
@@ -18198,7 +18255,7 @@ module.exports = reactDom;
 }
 
 }).call(this,require('_process'))
-},{"_process":16,"fbjs/lib/ExecutionEnvironment":1,"fbjs/lib/camelizeStyleName":3,"fbjs/lib/containsNode":4,"fbjs/lib/emptyFunction":5,"fbjs/lib/emptyObject":6,"fbjs/lib/getActiveElement":7,"fbjs/lib/hyphenateStyleName":9,"fbjs/lib/invariant":10,"fbjs/lib/shallowEqual":13,"fbjs/lib/warning":14,"object-assign":15,"prop-types/checkPropTypes":17,"react":24}],20:[function(require,module,exports){
+},{"_process":17,"fbjs/lib/ExecutionEnvironment":2,"fbjs/lib/camelizeStyleName":4,"fbjs/lib/containsNode":5,"fbjs/lib/emptyFunction":6,"fbjs/lib/emptyObject":7,"fbjs/lib/getActiveElement":8,"fbjs/lib/hyphenateStyleName":10,"fbjs/lib/invariant":11,"fbjs/lib/shallowEqual":14,"fbjs/lib/warning":15,"object-assign":16,"prop-types/checkPropTypes":18,"react":25}],21:[function(require,module,exports){
 /** @license React v16.4.0
  * react-dom.production.min.js
  *
@@ -18438,7 +18495,7 @@ var qi={createPortal:pi,findDOMNode:function(a){return null==a?null:1===a.nodeTy
 arguments)},unstable_batchedUpdates:Yh,unstable_deferredUpdates:Dh,flushSync:$h,unstable_flushControlled:ai,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{EventPluginHub:Ka,EventPluginRegistry:va,EventPropagators:$a,ReactControlledComponent:Rb,ReactDOMComponentTree:Qa,ReactDOMEventListener:Md},unstable_createRoot:function(a,b){return new li(a,!0,null!=b&&!0===b.hydrate)}};fi({findFiberByHostInstance:Na,bundleType:0,version:"16.4.0",rendererPackageName:"react-dom"});
 var vi={default:qi},wi=vi&&qi||vi;module.exports=wi.default?wi.default:wi;
 
-},{"fbjs/lib/ExecutionEnvironment":1,"fbjs/lib/containsNode":4,"fbjs/lib/emptyFunction":5,"fbjs/lib/emptyObject":6,"fbjs/lib/getActiveElement":7,"fbjs/lib/invariant":10,"fbjs/lib/shallowEqual":13,"object-assign":15,"react":24}],21:[function(require,module,exports){
+},{"fbjs/lib/ExecutionEnvironment":2,"fbjs/lib/containsNode":5,"fbjs/lib/emptyFunction":6,"fbjs/lib/emptyObject":7,"fbjs/lib/getActiveElement":8,"fbjs/lib/invariant":11,"fbjs/lib/shallowEqual":14,"object-assign":16,"react":25}],22:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -18480,7 +18537,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":19,"./cjs/react-dom.production.min.js":20,"_process":16}],22:[function(require,module,exports){
+},{"./cjs/react-dom.development.js":20,"./cjs/react-dom.production.min.js":21,"_process":17}],23:[function(require,module,exports){
 (function (process){
 /** @license React v16.4.0
  * react.development.js
@@ -19958,7 +20015,7 @@ module.exports = react;
 }
 
 }).call(this,require('_process'))
-},{"_process":16,"fbjs/lib/emptyFunction":5,"fbjs/lib/emptyObject":6,"fbjs/lib/invariant":10,"fbjs/lib/warning":14,"object-assign":15,"prop-types/checkPropTypes":17}],23:[function(require,module,exports){
+},{"_process":17,"fbjs/lib/emptyFunction":6,"fbjs/lib/emptyObject":7,"fbjs/lib/invariant":11,"fbjs/lib/warning":15,"object-assign":16,"prop-types/checkPropTypes":18}],24:[function(require,module,exports){
 /** @license React v16.4.0
  * react.production.min.js
  *
@@ -19982,7 +20039,7 @@ _calculateChangedBits:b,_defaultValue:a,_currentValue:a,_currentValue2:a,_change
 b.key&&(g=""+b.key);var l=void 0;a.type&&a.type.defaultProps&&(l=a.type.defaultProps);for(c in b)K.call(b,c)&&!L.hasOwnProperty(c)&&(d[c]=void 0===b[c]&&void 0!==l?l[c]:b[c])}c=arguments.length-2;if(1===c)d.children=e;else if(1<c){l=Array(c);for(var m=0;m<c;m++)l[m]=arguments[m+2];d.children=l}return{$$typeof:t,type:a.type,key:g,ref:h,props:d,_owner:f}},createFactory:function(a){var b=M.bind(null,a);b.type=a;return b},isValidElement:N,version:"16.4.0",__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:J,
 assign:k}},Y={default:X},Z=Y&&X||Y;module.exports=Z.default?Z.default:Z;
 
-},{"fbjs/lib/emptyFunction":5,"fbjs/lib/emptyObject":6,"fbjs/lib/invariant":10,"object-assign":15}],24:[function(require,module,exports){
+},{"fbjs/lib/emptyFunction":6,"fbjs/lib/emptyObject":7,"fbjs/lib/invariant":11,"object-assign":16}],25:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -19993,63 +20050,4 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":22,"./cjs/react.production.min.js":23,"_process":16}],25:[function(require,module,exports){
-const React = require('react')
-const ReactDOM = require('react-dom')
-
-const styles = {
-  bg: {
-    width: '100%',
-    height: '100%',
-    background: 'rgba(0,0,0,0.5)',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    zIndex: 2
-  },
-  inner: {
-    background: 'white',
-    height: '500px',
-    width: '500px',
-    padding: '20px',
-    margin: '20px auto'
-  },
-  btn: {
-    zIndex: 3,
-    position: 'absolute'
-  }
-}
-
-class HelloMessage extends React.Component {
-  constructor () {
-    super()
-    this.state = {
-      open: true
-    }
-  }
-  render () {
-    const opened = (
-      React.createElement("div", {style: styles.bg}, 
-        React.createElement("div", {style: styles.inner}, 
-          "Hello ", this.props.name
-        )
-      )
-    )
-    const closed = React.createElement("div", null)
-    return (
-      React.createElement("div", null, 
-        this.state.open ? opened : closed, 
-        React.createElement("button", {style: styles.btn, onClick: () => this.toggleModalOpen()}, 
-          this.state.open ? 'Close' : 'Open'
-        )
-      )
-    )
-  }
-  toggleModalOpen () {
-    this.setState({ open: !this.state.open })
-  }
-}
-
-ReactDOM.render(React.createElement(HelloMessage, {open: true, name: "Taylor"}), document.body)
-
-},{"react":24,"react-dom":21}]},{},[25]);
+},{"./cjs/react.development.js":23,"./cjs/react.production.min.js":24,"_process":17}]},{},[1]);

@@ -16,6 +16,8 @@ const nextHandler = async (req, res) => {
 }
 
 app.get('/schedule', nextHandler)
+app.get('/classes', nextHandler)
+app.get('/static*', nextHandler)
 app.get('/_next/*', nextHandler)
 
 app.use((req, res) => {

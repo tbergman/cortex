@@ -19,6 +19,7 @@ const nextHandler = async (req, res) => {
 app.get('/schedule', nextHandler)
 app.get('/classes', nextHandler)
 app.get('/practices', nextHandler)
+app.get('/practices-two', nextHandler)
 app.get('/chat', nextHandler)
 app.get('/article*', nextHandler)
 app.get('/exercise*', nextHandler)

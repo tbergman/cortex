@@ -24,6 +24,7 @@ app.get('/chat', nextHandler)
 app.get('/article*', nextHandler)
 app.get('/exercise*', nextHandler)
 app.get('/static*', nextHandler)
+app.get('/pwa/*', nextHandler)
 app.get('/_next/*', nextHandler)
 
 app.all('/sfproxy/?*', jsforceAjaxProxy())

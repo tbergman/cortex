@@ -13,6 +13,10 @@ Airtable.configure({
 })
 const base = Airtable.base('appdiwobKWKmEb7tl')
 
+//
+// Salesforce
+//
+
 // WARNING: This would be very insecure code for production, as it'll expose
 // a login/password in plain sight. We'd wrap this code in our own authenticated
 // GraphQL layer anyways, but worth noting. Also "SOQL injection"!? 😵
@@ -89,6 +93,10 @@ export const submitExercise = async (objName, data) => {
   return res
 }
 
+//
+// Airtable
+//
+
 const find = (tableName, formula) => {
   let records = []
   return new Promise((resolve, reject) => {
@@ -99,7 +107,7 @@ const find = (tableName, formula) => {
       })
       .eachPage(
         (rs, fetchNextPage) => {
-          rs.forEach(r => records.push(r._rawJson.fields))
+          rs.forEach(r => records.push({ ...r._rawJson.fields, id: r.getId() }))
           fetchNextPage()
         },
         err => {
@@ -107,6 +115,49 @@ const find = (tableName, formula) => {
         }
       )
   })
+}
+
+const cleanPracticeAndBlocks = ({ practice, blocks }) => ({
+  thumbnail: practice.Thumbnails[0].thumbnails.large.url,
+  name: practice.Name,
+  href: `/pwa/practice?name=${practice.Name}`,
+  blocks: blocks.map(block => ({
+    type: block.Type,
+    ...{
+      Checkbox: {
+        label: block['Input Label']
+      },
+      Audio: {
+        url: block['Audio URL']
+      },
+      Text: {
+        content: block['Text Content']
+      }
+    }[block.Type]
+  }))
+})
+
+export const submitPractice = async (clientEmail, practiceName, data) => {
+  const client = (await find('Clients', `{Email} = '${clientEmail}'`))[0]
+  const practice = (await find('Practices', `{Name} = '${practiceName}'`))[0]
+  return new Promise((resolve, reject) => {
+    base('Practice Submissions').create(
+      {
+        Client: [client.id],
+        Data: JSON.stringify(data),
+        Practice: [practice.id]
+      },
+      (err, record) => (err ? reject(err) : resolve(record))
+    )
+  })
+}
+
+export const findPractice = async name => {
+  const [blocks, practices] = await Promise.all([
+    find('Practice Blocks', `{Practice} = '${name}'`),
+    find('Practices', `{Name} = '${name}'`)
+  ])
+  return cleanPracticeAndBlocks({ practice: practices[0], blocks })
 }
 
 export const findPracticeCategoriesForClient = async email => {
@@ -138,25 +189,7 @@ export const findPracticeCategoriesForClient = async email => {
   const cleaned = categoriesWithPracticesAndBlocks.map(
     ({ category, practices }) => ({
       title: category.Name,
-      practices: practices.map(({ practice, blocks }) => ({
-        thumbnail: practice.Thumbnails[0].thumbnails.large.url,
-        name: practice.Name,
-        href: `/practice?name=${practice.Name}`,
-        blocks: blocks.map(block => ({
-          type: block.Type,
-          ...{
-            Input: {
-              label: block['Input Label']
-            },
-            Audio: {
-              url: block['Audio URL']
-            },
-            Text: {
-              content: block['Text Content']
-            }
-          }[block.Type]
-        }))
-      }))
+      practices: practices.map(cleanPracticeAndBlocks)
     })
   )
   return cleaned

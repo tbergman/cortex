@@ -17,6 +17,14 @@ export default class Exercise extends React.Component {
     this.state = { formData: {} }
   }
 
+  async componentDidMount () {
+    if ('serviceWorker' in navigator) {
+      console.log('registering')
+      await navigator.serviceWorker.register('/service-worker.js')
+      console.log('service worker registration successful')
+    }
+  }
+
   async onSubmit (e, practiceName) {
     e.preventDefault()
     await practices.submitPractice(

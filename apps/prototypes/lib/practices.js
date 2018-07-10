@@ -2,6 +2,7 @@ import _ from 'lodash'
 import jsforce from 'jsforce'
 import cheerio from 'cheerio'
 import Airtable from 'airtable'
+import idb from 'idb'
 
 const salesforce = new jsforce.Connection({
   proxyUrl: 'http://localhost:3000/sfproxy/'
@@ -138,9 +139,18 @@ const cleanPracticeAndBlocks = ({ practice, blocks }) => ({
 })
 
 export const submitPractice = async (clientEmail, practiceName, data) => {
+  // Register service worker
+  let reg
+  await navigator.serviceWorker.register('/service-worker.js').then(_reg => {
+    if ('sync' in _reg) {
+      reg = _reg
+    }
+  })
+
+  // Save to Airtable
   const client = (await find('Clients', `{Email} = '${clientEmail}'`))[0]
   const practice = (await find('Practices', `{Name} = '${practiceName}'`))[0]
-  return new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     base('Practice Submissions').create(
       {
         Client: [client.id],
@@ -150,6 +160,19 @@ export const submitPractice = async (clientEmail, practiceName, data) => {
       (err, record) => (err ? reject(err) : resolve(record))
     )
   })
+  console.log('saved to airtable')
+
+  // Save in IndexDB
+  const db = await idb.open('messages', 1, upgradeDb => {
+    upgradeDb.createObjectStore('outbox', {
+      autoIncrement: true,
+      keyPath: 'id'
+    })
+  })
+  const transaction = db.transaction('outbox', 'readwrite')
+  await transaction.objectStore('outbox').put(data)
+  reg.sync.register('outbox')
+  console.log('saved to indexdb')
 }
 
 export const findPractice = async name => {

@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express')
 const next = require('next')
 const _ = require('lodash')
@@ -16,6 +17,10 @@ const nextHandler = async (req, res) => {
   handle(req, res)
 }
 
+app.use(
+  '/service-worker.js',
+  express.static(path.join(__dirname, '/.next/service-worker.js'))
+)
 app.get('/schedule', nextHandler)
 app.get('/classes', nextHandler)
 app.get('/practices', nextHandler)
@@ -29,14 +34,14 @@ app.get('/_next/*', nextHandler)
 
 app.all('/sfproxy/?*', jsforceAjaxProxy())
 
-app.use((req, res) => {
+app.use('/v*', (req, res) => {
   proxy.web(req, res, {
     target: 'https://www.zopim.com',
     changeOrigin: true
   })
 })
 
-app.use((req, res) => {
+app.use('/api*', (req, res) => {
   proxy.web(req, res, {
     target: 'https://api.cliniko.com',
     changeOrigin: true

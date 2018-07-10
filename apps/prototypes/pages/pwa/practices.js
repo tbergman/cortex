@@ -12,6 +12,14 @@ export default class Index extends React.Component {
     return { practiceCategories }
   }
 
+  async componentDidMount () {
+    if ('serviceWorker' in navigator) {
+      console.log('registering')
+      await navigator.serviceWorker.register('/service-worker.js')
+      console.log('service worker registration successful')
+    }
+  }
+
   render () {
     return (
       <div>

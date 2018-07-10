@@ -14,7 +14,7 @@ nvm install 10 && nvm alias default 10
 Copy over a .env file
 
 ```
-heroku config --app=positron-staging | grep -E `cat .env.example | grep REPLACE | cut -f1 -d= | xargs | tr ' ' \\|` | sed -e 's/:\\ /=/g' | sed -e 's/ //g' > .env
+heroku config --app=mindset-cortex-staging | grep -E `cat .env.example | grep REPLACE | cut -f1 -d= | xargs | tr ' ' \\|` | sed -e 's/:\\ /=/g' | sed -e 's/ //g' > .env
 ```
 
 Then install dependencies and start the server

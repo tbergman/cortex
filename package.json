@@ -8,6 +8,7 @@
     "start": "node index.js",
     "prod": "NODE_ENV=production npm run build && NODE_ENV=production npm start",
     "bundle": "browserify -t reactify apps/playground/static/index.js > apps/playground/static/bundle.js",
+    "heroku-postbuild": "npm run build",
     "build": "next build apps/prototypes"
   },
   "repository": {

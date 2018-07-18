@@ -1,8 +1,13 @@
 import React from 'react'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import Input from 'components/input'
+import Button from 'components/button'
 
 export default class Body extends React.Component {
+  onSubmit = event => {
+    event.preventDefault()
+    console.log('Submit data to Airtable!')
+  }
+
   render () {
     return (
       <div>
@@ -17,7 +22,7 @@ export default class Body extends React.Component {
             <p>A transformative approach to wellness.</p>
             <p>Starting in New York City, Fall 2018</p>
             <a href='#leads' className='scroll'>
-              <button>Stay Connected</button>
+              <Button>Stay Connected</Button>
             </a>
           </div>
         </header>
@@ -95,53 +100,18 @@ export default class Body extends React.Component {
 
         <section className='form'>
           <div className='container'>
-            <div className='airtable' id='leads'>
-              <iframe
-                className='airtable-embed airtable-dynamic-height'
-                src='https://airtable.com/embed/shr13Mne0It2ltmH0?backgroundColor=purple'
-                frameBorder='0'
-                width='100%'
-                height='1066'
-              />
-            </div>
-            <div>
-              <TextField
-                required
-                id='firstName'
-                label='Required'
-                defaultValue='First Name'
-                margin='normal'
-              />
-
-              <TextField
-                required
-                id='lastName'
-                label='Required'
-                defaultValue='Last Name'
-                margin='normal'
-              />
-
-              <TextField
-                required
-                id='emailAddress'
-                label='Required'
-                defaultValue='example@email.com'
-                margin='normal'
-              />
-
-              <TextField
-                required
-                id='zipCode'
-                label='Number'
-                defaultValue='10017'
-                type='number'
-                margin='normal'
-              />
-
-              <Button variant='raised' color='primary'>
-                Submit!
-              </Button>
-            </div>
+            <h4>Get Started Today<br />Book a Free Consult</h4>
+            <form id='leads' onSubmit={this.onSubmit}>
+              <Input label='First Name' />
+              <br />
+              <Input label='Last Name' />
+              <br />
+              <Input label='Email Address' />
+              <br />
+              <Input label='Zip Code' />
+              <br />
+              <Button>Get Started</Button>
+            </form>
             <div className='copyright'>
               <h3>© 2018</h3>
             </div>

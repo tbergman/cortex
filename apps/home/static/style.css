@@ -1,5 +1,5 @@
 body {
-	font-family: 'Roboto', 'Work Sans', Helvetica, Arial, sans-serif;
+	font-family: 'Apercu', 'Roboto', 'Work Sans', Helvetica, Arial, sans-serif;
 	font-size: 18px;
 	line-height: 1.5;
 	background-color: #CB9874;
@@ -52,28 +52,6 @@ section {
   position: sticky;
   position: -webkit-sticky;
   top: 0;
-}
-
-
-button {
-  font-family: 'Work Sans', Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  background-color: #1d24c1;
-  border: none;
-  color: #f8f8f8;
-  line-height: 24px;
-  text-align: center;
-  padding: 12px 32px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  transition: all 0.5s ease;
-}
-
-button:hover {
-	cursor: pointer;
-	background-color: #f8f8f8;
-	color: #1d24c1;
-	box-shadow: 0 0 24px 8px rgba(0,0,0,0.1);
 }
 
 button.CTA {
@@ -176,6 +154,18 @@ section {
 	background-image: url("images/background_shapes.svg");
 	background-size: cover;
 	background-position: center center;
+}
+
+.form form {
+	margin: auto;
+	width: 325px;
+}
+
+.form h4 {
+	font-size: 36px;
+	line-height: 54px;
+	text-align: center;
+	margin-bottom: 40px;
 }
 
 .form .container {

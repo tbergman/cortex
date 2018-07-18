@@ -40,7 +40,6 @@ export default class Doc extends Document {
         <body>
           <Main />
           <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js' />
-          <script src='https://static.airtable.com/js/embed/embed_snippet_v1.js' />
           <script src='/static/scrolling.js' />
           <NextScript />
         </body>

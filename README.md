@@ -36,3 +36,10 @@ Generally speaking, a sorta "classic MVC"-like mindset should be applied to this
 When designing GraphQL schemas, we'll default to CRUD/OO-like language. So `createUser`, `updateUser` mutation language and `user`, `users` query language. Of course there will be the need for language beyond a [kingdom of nouns](https://steve-yegge.blogspot.com/2006/03/execution-in-kingdom-of-nouns.html), so when necessary use your judgement to use language like `${action}${Domain}` e.g. `followUser` or as a last resort, invent a new ad-hoc/aggregated term like `homeFeed` or `sendMailingList`. Because we can quickly get clients stuck using fields we expose, we'll strive for minimalistic CRUD-like coverage vs. exposing every GraphQL field out of the box. When evolving the API, aim to treat schemas as append-only, mark old fields deprecated, and only when necessary carefuly delete fields by migrating clients off and monitoring their usage. Authorization will use JWTs passed in the Authorization header to do role base auth logic which will simply throw auth errors in resolvers. Authentication will be handled by a service like Auth0.
 
 As complexity inevitably grows we may want to split out sub-apps into their own microservices. If we're careful about following the above design patterns, then it should be simple to pull out Next.js apps into their own deploys under subdomains that automatically share the Auth0 session. Eventually we may also want to separately deploy API microservices that use schema stitching to combine multiple GraphQL APIs into one orchestration layer.
+
+Note: For mounting multiple Next apps as sub-express apps we'll want to create a module that:
+
+- Takes a Next directory and returns Express middleware.
+- Configures that Next app's `assetPrefix`
+- Reads the pages directory to whitelist what gets served by it
+- Probably something to fix with bundling

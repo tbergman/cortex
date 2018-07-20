@@ -123,7 +123,7 @@ export default class Body extends React.Component {
                           <TextField
                             required
                             id="patientName"
-                            label="Full Name"
+                            label="Full Names"
                             // className={classes.textField}
                             // onChange={this.handleChange('name')}
                             margin="normal"

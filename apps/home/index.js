@@ -14,6 +14,7 @@ const nextHandler = async (req, res) => {
 }
 
 app.get('/', nextHandler)
+app.get('/referral', nextHandler)
 app.get('/static*', nextHandler)
 app.get('/_next/*', nextHandler)
 

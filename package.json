@@ -6,6 +6,7 @@
   "scripts": {
     "test": "npm run lint && jest --json | jest-json-to-tap",
     "lint": "standard --parser babel-eslint && prettier-standard 'apps/**/*.js' && prettier-standard 'lib/**/*.js'",
+    "heroku-postbuild": "for f in apps/*; do next build $f; done",
     "start": "babel-node index.js"
   },
   "repository": {

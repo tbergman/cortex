@@ -1,5 +1,8 @@
 # cortex
-The beginning of something great!!
+
+[![Heroku CI Status](https://ci-badges.herokuapp.com/pipelines/58050917-a6c7-4199-b953-75b12973bbaa/master.svg)](https://dashboard.heroku.com/pipelines/58050917-a6c7-4199-b953-75b12973bbaa/tests)
+
+The main Octave repo.
 
 ## Setup
 

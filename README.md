@@ -48,7 +48,7 @@ When designing GraphQL schemas, we'll default to CRUD/OO-like language. So `crea
 
 As complexity inevitably grows we may want to split out sub-apps into their own microservices. If we're careful about following the above design patterns, then it should be simple to pull out Next.js apps into their own deploys under subdomains that automatically share the Auth0 session. Eventually we may also want to separately deploy API microservices that use schema stitching to combine multiple GraphQL APIs into one orchestration layer.
 
-## Philosophy
+## Coding Philosophy
 
 Generally speaking we subscribe to the [New Jersey Style of programming](https://www.wikiwand.com/en/Worse_is_better).
 

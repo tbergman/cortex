@@ -2,17 +2,23 @@ const env = require('dotenv').config()
 const _ = require('lodash')
 
 module.exports = {
-  presets: ['next/babel'],
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        targets: {
+          esmodules: true
+        }
+      }
+    ],
+    'next/babel'
+  ],
   plugins: [
     ['transform-define', _.mapKeys(env.parsed, (v, k) => 'process.env.' + k)],
     [
       'module-resolver',
       {
-        root: ['./lib'],
-        alias: {
-          test: './test',
-          underscore: 'lodash'
-        }
+        root: ['./lib']
       }
     ]
   ],

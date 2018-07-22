@@ -5,6 +5,7 @@
   "main": "form.js",
   "scripts": {
     "test": "npm run lint && jest --json | jest-json-to-tap",
+    "jest": "jest",
     "lint": "standard --parser babel-eslint && prettier-standard 'apps/**/*.js' && prettier-standard 'lib/**/*.js'",
     "heroku-postbuild": "for f in apps/*; do next build $f; done",
     "start": "babel-node index.js"
@@ -20,14 +21,18 @@
   },
   "homepage": "https://github.com/withMindset/cortex#readme",
   "dependencies": {
+    "@artsy/express-reloadable": "^1.4.0",
     "@babel/core": "^7.0.0-beta.42",
     "@babel/node": "^7.0.0-beta.42",
     "@babel/preset-env": "^7.0.0-beta.42",
     "@material-ui/core": "^1.4.0",
+    "airtable": "^0.5.6",
+    "apollo-server-express": "^2.0.0",
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-transform-define": "^1.3.0",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
+    "graphql": "^0.13.2",
     "lodash": "^4.17.10",
     "next": "^6.1.1",
     "react": "^16.4.1",

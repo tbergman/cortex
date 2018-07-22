@@ -1,11 +1,30 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import request from 'superagent'
 
 export default class Body extends React.Component {
-  onSubmit = event => {
+  state = {
+    formData: {}
+  }
+
+  onSubmit = async event => {
     event.preventDefault()
-    console.log('Submit data to Airtable!')
+    const name = this.state.formData.name
+    const email = this.state.formData.email
+    await request.post('/api').send({
+      query: `mutation { createLead(name: "${name}" email: "${email}") { name } }`
+    })
+  }
+
+  onChange = fieldName => event => {
+    this.setState({
+      formData: { ...this.state.formData, [fieldName]: event.target.value }
+    })
+  }
+
+  inputProps = fieldName => {
+    return { id: fieldName, onChange: this.onChange(fieldName) }
   }
 
   render () {
@@ -110,56 +129,33 @@ export default class Body extends React.Component {
             <h4>
               Get Started Today<br />Book a Free Consult
             </h4>
-            {/* <form id='leads' onSubmit={this.onSubmit}>
-              <Input label='First Name' />
-              <br />
-              <Input label='Last Name' />
-              <br />
-              <Input label='Email Address' />
-              <br />
-              <Input label='Zip Code' />
-              <br />
-              <Button>Get Started</Button>
-            </form> */}
-
             <form id='referrals' onSubmit={this.onSubmit}>
               <h3>Patient/Client Information</h3>
               <TextField
-                required
-                id='patientName'
+                {...this.inputProps('name')}
                 label='Full Name'
-                // className={classes.textField}
-                // onChange={this.handleChange('name')}
                 margin='normal'
               />
               <br />
               <TextField
-                required
-                id='patientBirthdate'
+                {...this.inputProps('patientBirthdate')}
                 label='Birthdate'
                 type='date'
                 defaultValue='2000-01-01'
-                // className={classes.textField}
                 InputLabelProps={{
                   shrink: true
                 }}
               />
               <br />
               <TextField
-                required
-                id='patientEmail'
+                {...this.inputProps('email')}
                 label='Email Address'
-                // className={classes.textField}
-                // onChange={this.handleChange('name')}
                 margin='normal'
               />
               <br />
               <TextField
-                required
-                id='patientPhone'
+                {...this.inputProps('patientPhone')}
                 label='Phone Number'
-                // className={classes.textField}
-                // onChange={this.handleChange('name')}
                 margin='normal'
               />
               <br />
@@ -167,29 +163,20 @@ export default class Body extends React.Component {
 
               <h3>Referring Provider</h3>
               <TextField
-                required
-                id='providerName'
+                {...this.inputProps('providerName')}
                 label='Full Name'
-                // className={classes.textField}
-                // onChange={this.handleChange('name')}
                 margin='normal'
               />
               <br />
               <TextField
-                required
-                id='providerEmail'
+                {...this.inputProps('providerEmail')}
                 label='Email Address'
-                // className={classes.textField}
-                // onChange={this.handleChange('name')}
                 margin='normal'
               />
               <br />
               <TextField
-                required
-                id='providerPhone'
+                {...this.inputProps('providerPhone')}
                 label='Phone Number'
-                // className={classes.textField}
-                // onChange={this.handleChange('name')}
                 margin='normal'
               />
               <br />
@@ -204,7 +191,9 @@ export default class Body extends React.Component {
               />
               <br />
               <br />
-              <Button variant='contained'>Submit</Button>
+              <Button type='submit' variant='contained'>
+                Submit
+              </Button>
             </form>
 
             <div className='copyright'>

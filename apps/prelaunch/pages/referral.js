@@ -24,6 +24,7 @@ export default class Referral extends React.Component {
             <form id='referrals' onSubmit={this.onSubmit}>
               <h3>Patient/Client Information</h3>
               <TextField
+                fullWidth
                 required
                 id='patientName'
                 label='Full Name'
@@ -33,6 +34,7 @@ export default class Referral extends React.Component {
               />
               <br />
               <TextField
+                fullWidth
                 required
                 id='patientBirthdate'
                 label='Birthdate'
@@ -42,9 +44,11 @@ export default class Referral extends React.Component {
                 InputLabelProps={{
                   shrink: true
                 }}
+                margin='normal'
               />
               <br />
               <TextField
+                fullWidth
                 required
                 id='patientEmail'
                 label='Email Address'
@@ -54,6 +58,7 @@ export default class Referral extends React.Component {
               />
               <br />
               <TextField
+                fullWidth
                 required
                 id='patientPhone'
                 label='Phone Number'
@@ -66,6 +71,7 @@ export default class Referral extends React.Component {
 
               <h3>Referring Provider</h3>
               <TextField
+                fullWidth
                 required
                 id='providerName'
                 label='Full Name'
@@ -75,6 +81,7 @@ export default class Referral extends React.Component {
               />
               <br />
               <TextField
+                fullWidth
                 required
                 id='providerEmail'
                 label='Email Address'
@@ -84,6 +91,7 @@ export default class Referral extends React.Component {
               />
               <br />
               <TextField
+                fullWidth
                 required
                 id='providerPhone'
                 label='Phone Number'
@@ -96,6 +104,7 @@ export default class Referral extends React.Component {
 
               <h3>How can Octave help?</h3>
               <TextField
+                fullWidth
                 label='Any notes?'
                 multiline
                 rowsMax='4'
@@ -103,7 +112,7 @@ export default class Referral extends React.Component {
               />
               <br />
               <br />
-              <Button variant='contained'>Submit</Button>
+              <Button variant='contained' fullWidth color="primary">Submit</Button>
             </form>
 
             <div className='copyright'>

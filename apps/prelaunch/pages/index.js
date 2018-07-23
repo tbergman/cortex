@@ -41,7 +41,7 @@ export default class Body extends React.Component {
             <p>A transformative approach to wellness.</p>
             <p>Starting in New York City, Fall 2018</p>
             <a href='#leads' className='scroll'>
-              <Button>Stay Connected</Button>
+              <Button type='submit' fullWidth variant='contained' color="primary">Stay Connected</Button>
             </a>
           </div>
         </header>
@@ -133,15 +133,18 @@ export default class Body extends React.Component {
               <h3>Patient/Client Information</h3>
               <TextField
                 {...this.inputProps('name')}
+                fullWidth
                 label='Full Name'
                 margin='normal'
               />
               <br />
               <TextField
                 {...this.inputProps('patientBirthdate')}
+                fullWidth
                 label='Birthdate'
                 type='date'
                 defaultValue='2000-01-01'
+                margin='normal'
                 InputLabelProps={{
                   shrink: true
                 }}
@@ -149,12 +152,14 @@ export default class Body extends React.Component {
               <br />
               <TextField
                 {...this.inputProps('email')}
+                fullWidth
                 label='Email Address'
                 margin='normal'
               />
               <br />
               <TextField
                 {...this.inputProps('patientPhone')}
+                fullWidth
                 label='Phone Number'
                 margin='normal'
               />
@@ -164,18 +169,21 @@ export default class Body extends React.Component {
               <h3>Referring Provider</h3>
               <TextField
                 {...this.inputProps('providerName')}
+                fullWidth
                 label='Full Name'
                 margin='normal'
               />
               <br />
               <TextField
                 {...this.inputProps('providerEmail')}
+                fullWidth
                 label='Email Address'
                 margin='normal'
               />
               <br />
               <TextField
                 {...this.inputProps('providerPhone')}
+                fullWidth
                 label='Phone Number'
                 margin='normal'
               />
@@ -184,6 +192,7 @@ export default class Body extends React.Component {
 
               <h3>How can Octave help?</h3>
               <TextField
+                fullWidth
                 label='Any notes?'
                 multiline
                 rowsMax='4'
@@ -191,7 +200,7 @@ export default class Body extends React.Component {
               />
               <br />
               <br />
-              <Button type='submit' variant='contained'>
+              <Button type='submit' fullWidth variant='contained'color="primary">
                 Submit
               </Button>
             </form>

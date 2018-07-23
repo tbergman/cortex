@@ -20,12 +20,16 @@ const main = async () => {
   // Mount Next apps
   const nextApps = await Promise.all([
     dirToMiddleware(path.resolve(__dirname, 'apps', 'prelaunch')),
-    dirToMiddleware(path.resolve(__dirname, 'apps', 'marketing'))
+    dirToMiddleware(path.resolve(__dirname, 'apps', 'marketing')),
+    dirToMiddleware(path.resolve(__dirname, 'apps', 'portal'))
   ])
   nextApps.forEach(nextApp => app.use(nextApp))
 
   // Mount non-Next apps
   app.use(reloadableApp(path.resolve(__dirname, 'apps', 'api')))
+
+  // 404
+  app.get('*', (req, res) => res.status(404).send('Page not found'))
 
   // Start server
   app.listen(PORT, () =>

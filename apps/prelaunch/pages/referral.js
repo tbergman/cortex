@@ -15,31 +15,41 @@ export default class Referral extends React.Component {
       <div>
         <div className='container'>
           <section className='referralHeader'>
-          <img src='/static/images/octave_logo_white.svg' />
-          <h3>Refer your patients to Octave</h3>
-          <div className='referralHeaderCopy'>
-            <div className='referralHeaderCopyMain'>
-              <p>
-                Octave has world-class licensed practitioners in New York City. Physicians, therapists and clinics are encouraged to refer patients to Octave for evidence-based care with fast and easy patient intake. 
-              </p>
-              <p>
-                Fill out the secure form below to refer a patient or client. If you have questions or would like help setting up an appointment, email referrals@findoctave.com or call (123) 456 - 7890. Referrals can also be faxed to (234) 567 - 8901.
-              </p>
+            <img src='/static/images/octave_logo_white.svg' />
+            <h3>Refer your patients to Octave</h3>
+            <div className='referralHeaderCopy'>
+              <div className='referralHeaderCopyMain'>
+                <p>
+                  Octave has world-class licensed practitioners in New York
+                  City. Physicians, therapists and clinics are encouraged to
+                  refer patients to Octave for evidence-based care with fast and
+                  easy patient intake.
+                </p>
+                <p>
+                  Fill out the secure form below to refer a patient or client.
+                  If you have questions or would like help setting up an
+                  appointment, email referrals@findoctave.com or call (123) 456
+                  - 7890. Referrals can also be faxed to (234) 567 - 8901.
+                </p>
+              </div>
+              <ul>
+                <li>
+                  A therapy practice designed by a team of practitioners with
+                  over 70 published psychology books
+                </li>
+                <li>Clinicians with over 30 years experience</li>
+                <li>Next day appointments</li>
+                <li>Multi-specialty evidence-based care</li>
+              </ul>
             </div>
-            <ul>
-              <li>A therapy practice designed by a team of practitioners with over 70 published psychology books</li>
-              <li>Clinicians with over 30 years experience</li>
-              <li>Next day appointments</li>
-              <li>Multi-specialty evidence-based care</li>
-            </ul>  
-          </div>
           </section>
         </div>
         <div>
           <section className='form'>
             <div className='container'>
               <h4>
-                Complete this secure referral form and we will follow up with your patient or client.
+                Complete this secure referral form and we will follow up with
+                your patient or client.
               </h4>
 
               <form id='referrals' onSubmit={this.onSubmit}>
@@ -133,7 +143,9 @@ export default class Referral extends React.Component {
                 />
                 <br />
                 <br />
-                <Button variant='contained' fullWidth color="primary">Submit</Button>
+                <Button variant='contained' fullWidth color='primary'>
+                  Submit
+                </Button>
               </form>
 
               <div className='copyright'>

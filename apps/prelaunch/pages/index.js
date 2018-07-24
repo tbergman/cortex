@@ -41,7 +41,14 @@ export default class Body extends React.Component {
             <p>A transformative approach to wellness.</p>
             <p>Starting in New York City, Fall 2018</p>
             <a href='#leads' className='scroll'>
-              <Button type='submit' fullWidth variant='contained' color="primary">Stay Connected</Button>
+              <Button
+                type='submit'
+                fullWidth
+                variant='contained'
+                color='primary'
+              >
+                Stay Connected
+              </Button>
             </a>
           </div>
         </header>
@@ -200,7 +207,12 @@ export default class Body extends React.Component {
               />
               <br />
               <br />
-              <Button type='submit' fullWidth variant='contained'color="primary">
+              <Button
+                type='submit'
+                fullWidth
+                variant='contained'
+                color='primary'
+              >
                 Submit
               </Button>
             </form>

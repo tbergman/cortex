@@ -4,7 +4,6 @@ body {
 	line-height: 1.5;
 	background-color: #CB9874;
 	color: #232323;
-
 }
 
 .shapes {
@@ -75,6 +74,10 @@ header {
 header img {
 	width: 50vw;
 	margin-bottom: 64px;
+}
+
+header a {
+	text-decoration: none;
 }
 
 .illustration {

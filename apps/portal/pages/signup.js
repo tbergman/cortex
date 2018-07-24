@@ -32,8 +32,10 @@ export default class Body extends React.Component {
     })
   }
   render () {
-    return this.state.user
-      ? <h1>Welcome {this.state.user.name}</h1>
-      : <p>Loading...</p>
+    return this.state.user ? (
+      <h1>Welcome {this.state.user.name}</h1>
+    ) : (
+      <p>Loading...</p>
+    )
   }
 }

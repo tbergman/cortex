@@ -33,7 +33,7 @@ const main = async () => {
 
   // Start server
   app.listen(PORT, () =>
-    console.log(`🧠  The neurons are flowing: http://localhost:${PORT}`)
+    console.log(`🧠  The neurons are firing: http://localhost:${PORT}`)
   )
 }
 

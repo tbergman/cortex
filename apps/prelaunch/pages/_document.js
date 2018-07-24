@@ -1,6 +1,18 @@
 import Document, { Head, Main, NextScript } from 'next/document'
+import React from 'react'
+import * as nextMui from 'next-mui'
 
 export default class Doc extends Document {
+  static async getInitialProps (ctx) {
+    const muiProps = nextMui.initialProps(ctx)
+    const docProps = await Document.getInitialProps(ctx)
+    return { ...docProps, ...muiProps }
+  }
+
+  componentDidMount () {
+    nextMui.onComponentDidMount()
+  }
+
   render () {
     return (
       <html>

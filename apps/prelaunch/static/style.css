@@ -169,6 +169,8 @@ section {
 	line-height: 54px;
 	text-align: center;
 	margin-bottom: 40px;
+	max-width: 700px;
+    margin: 0 auto;
 }
 
 .form .container {

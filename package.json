@@ -7,7 +7,8 @@
     "test": "npm run lint && jest --json | jest-json-to-tap",
     "jest": "jest",
     "lint": "standard --parser babel-eslint && prettier-standard 'apps/**/*.js' && prettier-standard 'lib/**/*.js'",
-    "heroku-postbuild": "for f in apps/*; do next build $f; done",
+    "heroku-postbuild": "[ $CI <> true ] && npm run build || echo 'skipping build'",
+    "build": "for f in apps/*; do next build $f; done",
     "start": "babel-node index.js",
     "job": "babel-node apps/jobs/lib/cli.js"
   },

@@ -1,7 +1,6 @@
 /**
- * The first part of preboarding where we poll Airtable to find new leads
- * we've invited to enroll in coaching then send them a welcome notification
- * linking to the coach schedule flow.
+ * After a lead completes preboarding or class scheduling where we poll Airtable
+ * to find `onboarded` Signup Stage and invite them to signup to the app.
  */
 import twilio from 'twilio'
 import bcrypt from 'bcrypt'
@@ -9,8 +8,8 @@ import Airtable from 'airtable'
 
 const {
   AIRTABLE_API_KEY,
-  AIRTABLE_LEADS_BASE_ID,
-  SMS_APP_WELCOME,
+  AIRTABLE_BASE_ID,
+  SMS_ONBOARDING,
   TWILIO_ACCOUNT_SID,
   TWILIO_BCRYPT_SALT,
   TWILIO_SERVICE_SID,
@@ -29,15 +28,13 @@ const sendWelcomeSMS = async phoneNum => {
     address: phoneNum
   })
   await client.notify.services(TWILIO_SERVICE_SID).notifications.create({
-    body: SMS_APP_WELCOME,
+    body: SMS_ONBOARDING,
     identity
   })
 }
 
 const findOnboardingLeads = async () => {
-  const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(
-    AIRTABLE_LEADS_BASE_ID
-  )
+  const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID)
   const records = await new Promise((resolve, reject) => {
     let recs = []
     base('Leads')

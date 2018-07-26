@@ -1,4 +1,4 @@
-import welcomeOnboarders from '../lib/welcome'
+import welcomeOnboarders from '../lib/onboarding'
 
 let twilioMessage, twilioBindingPhoneNum
 

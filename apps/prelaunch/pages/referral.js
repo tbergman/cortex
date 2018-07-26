@@ -48,8 +48,8 @@ export default class Referral extends React.Component {
           <section className='form'>
             <div className='container'>
               <h4>
-                Complete this referral form and we will follow up with
-                your patient or client.
+                Complete this referral form and we will follow up with your
+                patient or client.
               </h4>
 
               <form id='referrals' onSubmit={this.onSubmit}>

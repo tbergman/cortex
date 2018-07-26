@@ -12,8 +12,14 @@ export default class Body extends React.Component {
     event.preventDefault()
     const name = this.state.formData.name
     const email = this.state.formData.email
+    const phone = this.state.formData.phone
     await request.post('/api').send({
-      query: `mutation { createLead(name: "${name}" email: "${email}") { name } }`
+      query: `mutation {
+        createLead(
+          name: "${name}"
+          email: "${email}"
+          phone: "${phone}"
+        ) { name } }`
     })
   }
 
@@ -143,6 +149,7 @@ export default class Body extends React.Component {
                 fullWidth
                 label='Full Name'
                 margin='normal'
+                required
               />
               <br />
               <TextField
@@ -162,13 +169,15 @@ export default class Body extends React.Component {
                 fullWidth
                 label='Email Address'
                 margin='normal'
+                required
               />
               <br />
               <TextField
-                {...this.inputProps('patientPhone')}
+                {...this.inputProps('phone')}
                 fullWidth
                 label='Phone Number'
                 margin='normal'
+                required
               />
               <br />
               <br />

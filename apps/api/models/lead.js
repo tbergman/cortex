@@ -1,3 +1,7 @@
+/**
+ * A lead is a person before they become and Octave user.
+ * These are collected from referral or web form.
+ */
 import Airtable from 'airtable'
 
 const { AIRTABLE_API_KEY, AIRTABLE_BASE_ID } = process.env

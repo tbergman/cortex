@@ -1,8 +1,43 @@
 import React from 'react'
+import request from 'superagent'
 
 export default class Body extends React.Component {
   state = {
     step: 0
+  }
+
+  static async getInitialProps () {
+    const res = await request.post(process.env.APP_URL + '/api').send({
+      query: `query {
+        step0: contentModule(name: "imprint_schedule_step_1") {
+          a
+          h1
+          p
+          images(width: 480 height: 270) {
+            url
+          }
+        }
+        step1: contentModule(name: "imprint_schedule_step_2") {
+          a
+          images(width: 480 height: 270) {
+            url
+          }
+          p
+        }
+        step2: contentModule(name: "imprint_schedule_step_3") {
+          h1
+        }
+        step3: contentModule(name: "imprint_schedule_step_4") {
+          h1
+          p
+          a
+          images(width: 480 height: 270) {
+            url
+          }
+        }
+      }`
+    })
+    return { ...res.body.data }
   }
 
   renderNextButton (text) {
@@ -16,10 +51,10 @@ export default class Body extends React.Component {
   renderStep0 () {
     return (
       <div>
-        <h1>Welcome to Octave</h1>
-        <img src='http://placekitten.com/500/300' />
-        <p>Octave is great</p>
-        {this.renderNextButton('Get Started')}
+        <h1>{this.props.step0.h1}</h1>
+        <img src={this.props.step0.images[0].url} />
+        <p>{this.props.step0.p}</p>
+        {this.renderNextButton(this.props.step0.a)}
       </div>
     )
   }
@@ -27,8 +62,9 @@ export default class Body extends React.Component {
   renderStep1 () {
     return (
       <div>
-        <p>Octave puts relationships first, so first we'll start by</p>
-        {this.renderNextButton('Schedule coaching')}
+        <img src={this.props.step1.images[0].url} />
+        <p>{this.props.step1.p}</p>
+        {this.renderNextButton(this.props.step1.a)}
       </div>
     )
   }
@@ -36,7 +72,7 @@ export default class Body extends React.Component {
   renderStep2 () {
     return (
       <div>
-        <h1>Book through our partner Cliniko</h1>
+        <h1>{this.props.step2.h1}</h1>
         <iframe
           src='https://octave.cliniko.com/bookings?business_id=65555&practitioner_id=103104&appointment_type_id=302766&embedded=true'
           frameborder='0'
@@ -45,7 +81,7 @@ export default class Body extends React.Component {
           height='500'
         />
         <br />
-        {this.renderNextButton('Im all done booking')}
+        {this.renderNextButton('Next (TODO: Remove this for polling)')}
       </div>
     )
   }
@@ -53,8 +89,10 @@ export default class Body extends React.Component {
   renderStep3 () {
     return (
       <div>
-        <h1>You're all set</h1>
-        <a href='/'>Done</a>
+        <h1>{this.props.step3.h1}</h1>
+        <img src={this.props.step3.images[0].url} />
+        <br />
+        <a href='/'>{this.props.step0.a}</a>
       </div>
     )
   }

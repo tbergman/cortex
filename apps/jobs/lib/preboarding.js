@@ -7,6 +7,7 @@ import twilio from 'twilio'
 import bcrypt from 'bcrypt'
 import Airtable from 'airtable'
 import mailgun from 'mailgun-js'
+import marked from 'marked'
 
 const {
   AIRTABLE_API_KEY,
@@ -25,35 +26,57 @@ const mgun = mailgun({
   apiKey: MAILGUN_KEY,
   domain: MAILGUN_DOMAIN
 })
-// TODO: Manage content in Airtable
-const smsMsg =
-  "🙌 Congrats, you've been invited to schedule a free consult: http://localhost:3000/imprint-schedule"
-const emailSubject = "We've invited you to Octave coaching"
-const emailBody =
-  "🙌 Congrats, you've been invited to schedule a free consult: http://localhost:3000/imprint-schedule"
+
+const notificationContent = async () => {
+  const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID)
+  const records = await new Promise((resolve, reject) => {
+    let recs = []
+    base('notifications')
+      .select({
+        maxRecords: 10,
+        filterByFormula: `name = 'preboarding'`
+      })
+      .eachPage(
+        (records, fetchNextPage) => {
+          records.forEach(rec => recs.push(rec.fields))
+          fetchNextPage()
+        },
+        err => {
+          err ? reject(err) : resolve(recs)
+        }
+      )
+  })
+  return {
+    sms: records[0].sms,
+    subject: records[0].email_subject,
+    body: records[0].email_body
+  }
+}
 
 const sendSMS = async phoneNum => {
   const identity = (await bcrypt.hash(phoneNum, TWILIO_BCRYPT_SALT)).replace(
     /[\W_]+/g,
     ''
   )
+  const { sms: body } = await notificationContent()
   await twil.notify.services(TWILIO_SERVICE_SID).bindings.create({
     identity,
     bindingType: 'sms',
     address: phoneNum
   })
   await twil.notify.services(TWILIO_SERVICE_SID).notifications.create({
-    body: smsMsg,
+    body,
     identity
   })
 }
 
 const sendEmail = async email => {
+  const { subject, body } = await notificationContent()
   await mgun.messages().send({
     from: EMAIL_FROM_ADDRESS,
     to: email,
-    subject: emailSubject,
-    text: emailBody
+    subject,
+    html: marked.parse(body)
   })
 }
 

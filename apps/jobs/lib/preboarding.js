@@ -5,13 +5,11 @@
  */
 import twilio from 'twilio'
 import bcrypt from 'bcrypt'
-import Airtable from 'airtable'
+import * as at from 'at'
 import mailgun from 'mailgun-js'
 import marked from 'marked'
 
 const {
-  AIRTABLE_API_KEY,
-  AIRTABLE_BASE_ID,
   EMAIL_FROM_ADDRESS,
   MAILGUN_DOMAIN,
   MAILGUN_KEY,
@@ -28,23 +26,9 @@ const mgun = mailgun({
 })
 
 const notificationContent = async () => {
-  const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID)
-  const records = await new Promise((resolve, reject) => {
-    let recs = []
-    base('notifications')
-      .select({
-        maxRecords: 10,
-        filterByFormula: `name = 'preboarding'`
-      })
-      .eachPage(
-        (records, fetchNextPage) => {
-          records.forEach(rec => recs.push(rec.fields))
-          fetchNextPage()
-        },
-        err => {
-          err ? reject(err) : resolve(recs)
-        }
-      )
+  const records = await at.findAll({
+    table: 'notifications',
+    filter: "name= 'preboarding'"
   })
   return {
     sms: records[0].sms,
@@ -81,23 +65,9 @@ const sendEmail = async email => {
 }
 
 const findPreboardingLeads = async () => {
-  const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID)
-  const records = await new Promise((resolve, reject) => {
-    let recs = []
-    base('Leads')
-      .select({
-        maxRecords: 10,
-        filterByFormula: "{Signup Stage} = 'preboarding'"
-      })
-      .eachPage(
-        (records, fetchNextPage) => {
-          records.forEach(rec => recs.push(rec.fields))
-          fetchNextPage()
-        },
-        err => {
-          err ? reject(err) : resolve(recs)
-        }
-      )
+  const records = await at.findAll({
+    table: 'leads',
+    filter: "{Signup Stage} = 'preboarding'"
   })
   return records
 }

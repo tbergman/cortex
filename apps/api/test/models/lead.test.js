@@ -1,7 +1,10 @@
 import * as Lead from '../../models/lead'
-import airtable from 'airtable'
 
-jest.mock('airtable')
+let createCalled = false
+
+jest.mock('at', () => ({
+  base: jest.fn().mockReturnValue({ create: () => (createCalled = true) })
+}))
 
 test('toAirtableRecord transforms args to an airtable schema', () => {
   const lead = Lead.toAirtableRecord({
@@ -15,12 +18,9 @@ test('toAirtableRecord transforms args to an airtable schema', () => {
 })
 
 test('createLead adds a lead to Airtable', async () => {
-  const create = jest.fn()
-  const base = jest.fn().mockReturnValue({ create })
-  airtable.mockImplementation(() => ({ base: () => base }))
   await Lead.createLead(null, {
     name: 'Karen Horney',
     email: 'karen@horney.com'
   })
-  expect(create).toHaveBeenCalled()
+  expect(createCalled).toEqual(true)
 })

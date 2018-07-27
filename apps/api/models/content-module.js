@@ -38,12 +38,12 @@
  *   ```
  *
  */
-import Airtable from 'airtable'
+import * as at from 'at'
 import cheerio from 'cheerio'
 import marked from 'marked'
 import qs from 'querystring'
 
-const { AIRTABLE_API_KEY, AIRTABLE_BASE_ID, APP_URL } = process.env
+const { APP_URL } = process.env
 
 const tags = [
   'a',
@@ -77,7 +77,12 @@ export const airtableToModel = record => {
     .get()
   const pEls = $('body > p')
     .map((i, el) => {
-      const text = $(el).clone().children().remove().end().text()
+      const text = $(el)
+        .clone()
+        .children()
+        .remove()
+        .end()
+        .text()
       return { tag: $(el).get(0).tagName, text }
     })
     .get()
@@ -87,7 +92,8 @@ export const airtableToModel = record => {
   }, {})
   const images = args => {
     return record.images.map(image => ({
-      url: `${APP_URL}/api/image?` +
+      url:
+        `${APP_URL}/api/image?` +
         qs.stringify({
           url: image.url,
           width: args.width,
@@ -99,23 +105,9 @@ export const airtableToModel = record => {
 }
 
 export const contentModules = async (_root, args) => {
-  const base = new Airtable({ apiKey: AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID)
-  const records = await new Promise((resolve, reject) => {
-    let recs = []
-    base('content_modules')
-      .select({
-        maxRecords: 10,
-        filterByFormula: `name = '${args.name}'`
-      })
-      .eachPage(
-        (records, fetchNextPage) => {
-          records.forEach(rec => recs.push(rec.fields))
-          fetchNextPage()
-        },
-        err => {
-          err ? reject(err) : resolve(recs)
-        }
-      )
+  const records = await at.findAll({
+    table: 'contentModules',
+    filter: `name = '${args.name}'`
   })
   return records.map(airtableToModel, args)
 }

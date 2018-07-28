@@ -1,7 +1,7 @@
 import React from 'react'
 import request from 'superagent'
 
-export default class Body extends React.Component {
+export default class ImprintSchedule extends React.Component {
   state = {
     step: 0
   }
@@ -75,7 +75,7 @@ export default class Body extends React.Component {
         <h1>{this.props.step2.h1}</h1>
         <iframe
           src='https://octave.cliniko.com/bookings?business_id=65555&practitioner_id=103104&appointment_type_id=302766&embedded=true'
-          frameborder='0'
+          frameBorder='0'
           scrolling='auto'
           width='500'
           height='500'

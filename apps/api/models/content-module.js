@@ -42,6 +42,7 @@ import * as at from 'at'
 import cheerio from 'cheerio'
 import marked from 'marked'
 import qs from 'querystring'
+import _ from 'lodash'
 
 const { APP_URL } = process.env
 
@@ -88,7 +89,7 @@ export const airtableToModel = record => {
     .get()
   const els = [...rootEls, ...pWrappedEls, ...pEls]
   const copy = els.reduce((acc, { tag, text }) => {
-    return { ...acc, [tag]: [...(acc[tag] || []), text] }
+    return { ...acc, [tag]: [...(acc[tag] || []), _.trim(text)] }
   }, {})
   const images = args => {
     return record.images.map(image => ({
@@ -109,7 +110,7 @@ export const contentModules = async (_root, args) => {
     table: 'contentModules',
     filter: `name = '${args.name}'`
   })
-  return records.map(airtableToModel, args)
+  return records.map(airtableToModel)
 }
 
 export const contentModule = async (_root, args) =>

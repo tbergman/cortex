@@ -1,12 +1,15 @@
 import React from 'react'
 import request from 'superagent'
 
+const sleep = delay => new Promise(resolve => setTimeout(resolve, delay))
+
 export default class ImprintSchedule extends React.Component {
   state = {
     step: 0
   }
 
-  static async getInitialProps () {
+  static async getInitialProps ({ query }) {
+    if (!query.leadId) throw new Error('Missing lead ID')
     const res = await request.post(process.env.APP_URL + '/api').send({
       query: `query {
         step0: contentModule(name: "imprint_schedule_step_1") {
@@ -37,15 +40,40 @@ export default class ImprintSchedule extends React.Component {
         }
       }`
     })
-    return { ...res.body.data }
+    return { ...res.body.data, leadId: query.leadId }
+  }
+
+  pollForImprintInterviewAdded = async () => {
+    const res = await request.post(process.env.APP_URL + '/api').send({
+      query: `query {
+        lead(id: "${this.props.leadId}") {
+          name
+          email
+          phone
+          appointments(type:IMPRINT_INTERVIEW) {
+            name
+          }
+        }
+      }`
+    })
+    const appointment = res.body.data.lead.appointments[0]
+    if (appointment) {
+      console.log('next')
+      this.nextStep()
+    } else {
+      console.log('poll')
+      await sleep(Number(process.env.CLINIKO_POLL_INTERVAL))
+      return this.pollForImprintInterviewAdded()
+    }
+  }
+
+  nextStep = () => {
+    if (this.state.step === 1) this.pollForImprintInterviewAdded()
+    this.setState({ step: this.state.step + 1 })
   }
 
   renderNextButton (text) {
-    return (
-      <button onClick={() => this.setState({ step: this.state.step + 1 })}>
-        {text}
-      </button>
-    )
+    return <button onClick={this.nextStep}>{text}</button>
   }
 
   renderStep0 () {

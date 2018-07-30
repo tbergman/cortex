@@ -45,7 +45,6 @@ import qs from 'querystring'
 import _ from 'lodash'
 
 const { APP_URL } = process.env
-
 const tags = [
   'a',
   'blockquote',
@@ -63,6 +62,30 @@ const tags = [
   'strong',
   'ul'
 ]
+
+export const schema = {
+  types: `
+    type Image {
+      url: String
+    }
+    type ContentModule {
+      name: String
+      ${tags.map(name => `${name}: [String]`)}
+      images(
+        width: Int
+        height: Int
+      ): [Image]
+    }
+  `,
+  queries: `
+    contentModule(
+      name: String
+    ): ContentModule
+    contentModules(
+      name: String
+    ): [ContentModule]
+`
+}
 
 export const airtableToModel = record => {
   const $ = cheerio.load(marked.parse(record.copy))
@@ -115,33 +138,6 @@ export const contentModules = async (_root, args) => {
 
 export const contentModule = async (_root, args) =>
   (await contentModules(_root, args))[0]
-
-export const schema = {
-  types: `
-    type Image {
-      url: String
-    }
-    type ContentModule {
-      name: String
-      ${tags.map(name => `${name}: [String]`)}
-      images(
-        width: Int
-        height: Int
-      ): [Image]
-    }
-  `,
-  mutations: ``,
-  queries: `
-    contentModule(
-      name: String
-    ): ContentModule
-    contentModules(
-      name: String
-    ): [ContentModule]
-`
-}
-
-export const mutations = {}
 
 export const queries = {
   contentModule,

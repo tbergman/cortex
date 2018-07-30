@@ -140,28 +140,15 @@ export default class Body extends React.Component {
         <section className='form'>
           <div className='container'>
             <h4>
-              Get Started Today<br />Book a Free Consult
+              Be the first to know about events and launch dates.
             </h4>
-            <form id='referrals' onSubmit={this.onSubmit}>
-              <h3>Patient/Client Information</h3>
+            <form id='landingLeadGen' onSubmit={this.onSubmit}>
               <TextField
                 {...this.inputProps('name')}
                 fullWidth
                 label='Full Name'
                 margin='normal'
                 required
-              />
-              <br />
-              <TextField
-                {...this.inputProps('patientBirthdate')}
-                fullWidth
-                label='Birthdate'
-                type='date'
-                defaultValue='2000-01-01'
-                margin='normal'
-                InputLabelProps={{
-                  shrink: true
-                }}
               />
               <br />
               <TextField
@@ -173,47 +160,13 @@ export default class Body extends React.Component {
               />
               <br />
               <TextField
-                {...this.inputProps('phone')}
+                {...this.inputProps('zipcode')}
                 fullWidth
-                label='Phone Number'
+                label='Zip Code'
                 margin='normal'
                 required
               />
-              <br />
-              <br />
 
-              <h3>Referring Provider</h3>
-              <TextField
-                {...this.inputProps('providerName')}
-                fullWidth
-                label='Full Name'
-                margin='normal'
-              />
-              <br />
-              <TextField
-                {...this.inputProps('providerEmail')}
-                fullWidth
-                label='Email Address'
-                margin='normal'
-              />
-              <br />
-              <TextField
-                {...this.inputProps('providerPhone')}
-                fullWidth
-                label='Phone Number'
-                margin='normal'
-              />
-              <br />
-              <br />
-
-              <h3>How can Octave help?</h3>
-              <TextField
-                fullWidth
-                label='Any notes?'
-                multiline
-                rowsMax='4'
-                margin='normal'
-              />
               <br />
               <br />
               <Button

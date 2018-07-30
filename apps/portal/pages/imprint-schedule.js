@@ -58,10 +58,8 @@ export default class ImprintSchedule extends React.Component {
     })
     const appointment = res.body.data.lead.appointments[0]
     if (appointment) {
-      console.log('next')
       this.nextStep()
     } else {
-      console.log('poll')
       await sleep(Number(process.env.CLINIKO_POLL_INTERVAL))
       return this.pollForImprintInterviewAdded()
     }
@@ -102,14 +100,12 @@ export default class ImprintSchedule extends React.Component {
       <div>
         <h1>{this.props.step2.h1}</h1>
         <iframe
-          src='https://octave.cliniko.com/bookings?business_id=65555&practitioner_id=103104&appointment_type_id=302766&embedded=true'
+          src={process.env.CLINIKO_IMPRINT_CALENDAR_URL}
           frameBorder='0'
           scrolling='auto'
           width='500'
           height='500'
         />
-        <br />
-        {this.renderNextButton('Next (TODO: Remove this for polling)')}
       </div>
     )
   }

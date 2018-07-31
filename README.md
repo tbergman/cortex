@@ -23,7 +23,7 @@ Before submitting a pull request make sure your code passes linting and tests.
 npm test
 ```
 
-If you need to add keys for a service or something else sensitive in the .env file then edit the .env file, run encryption, and check in the new `.env.enc` file.
+If you need to update the .env file then edit it, run encryption, and check in the new `.env.enc` file.
 
 ```
 npm run envenc

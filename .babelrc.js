@@ -1,3 +1,4 @@
+require('envenc')(process.env.CORTEX_ENV_KEY)
 const env = require('dotenv').config()
 const _ = require('lodash')
 

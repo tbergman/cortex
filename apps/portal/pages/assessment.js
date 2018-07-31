@@ -5,125 +5,221 @@
  */
 import React from 'react'
 import _ from 'lodash'
-
-// TODO: Write GraphQL treatment note model and replace this stub
-const stubData = {
-  data: {
-    lead: {
-      treatmentNote: {
-        name: 'Imprint Interview',
-        sections: [
-          {
-            name: 'Sleeping habits',
-            questions: [
-              {
-                name: 'Do you have trouble sleeping?',
-                type: 'RADIO_BUTTON',
-                answers: [{ value: 'Yes' }, { value: 'No' }]
-              },
-              {
-                name: 'How many hours per day do you sleep on average',
-                type: 'RADIO_BUTTON',
-                answers: [
-                  { value: '3 or less' },
-                  { value: '4' },
-                  { value: '5' },
-                  { value: '6' },
-                  { value: '7' },
-                  { value: '8' },
-                  { value: '9' },
-                  { value: '10' },
-                  { value: '11 or more' }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    }
-  }
-}
+import request from 'superagent'
 
 export default class Assessment extends React.Component {
-  state = {
-    formData: {
-      sections: [{ questions: [] }]
-    }
-  }
   static async getInitialProps ({ query: { email, type } }) {
-    const apptType = type
-      .toUpperCase()
-      .split(' ')
-      .join('_')
-    console.log(
-      `
-      query {
-        lead(email: "${email}") {
-          treatmentNote(appointmentType: ${apptType}) {
-            sections
+    const apptType = type.toUpperCase().split(' ').join('_')
+    const { body: { data: { treatmentNoteTemplate } } } = await request
+      .post(process.env.APP_URL + '/api')
+      .send({
+        query: `
+          query {
+            treatmentNoteTemplate(appointmentType: ${apptType}) {
+              name
+              content {
+                sections {
+                  name
+                  questions {
+                    name
+                    type
+                    answers {
+                      value
+                    }
+                  }
+                }
+              }
+            }
           }
-      }
-      `
-    )
-    const { data: { lead: { treatmentNote } } } = stubData
-    return { treatmentNote }
+        `
+      })
+    return { treatmentNoteTemplate, email }
   }
 
-  onChange ({ sectionIndex, questionIndex, value }) {
-    const path = `sections[${sectionIndex}].questions[${questionIndex}].answer`
-    this.setState({
-      formData: _.set(this.state.formData, path, value)
+  constructor (props) {
+    super(props)
+    this.state = { formData: props.treatmentNoteTemplate }
+  }
+
+  onSubmit = async event => {
+    event.preventDefault()
+    await request.post(process.env.APP_URL + '/api').send({
+      query: `
+      mutation CreateTreatmentNote($content: TreatmentNoteInputContent!) {
+        createTreatmentNote(
+          email: "${this.props.email}"
+          content: $content
+          appointmentType: IMPRINT_INTERVIEW
+        ) {
+          name
+        }
+      }
+      `,
+      variables: { content: this.state.formData.content }
     })
   }
 
-  onSubmit = event => {
-    event.preventDefault()
-    console.log(
-      `
-      mutation {
-        createTreatmentNote(${this.state.formData}) { name }
-      }
-      `
+  onSelectRadio = ({ sectionIndex, questionIndex, answerIndex }) => {
+    const answersPath = [
+      'content',
+      `sections[${sectionIndex}]`,
+      `questions[${questionIndex}]`,
+      'answers'
+    ].join('.')
+    const templateAnswers = _.get(this.props.treatmentNoteTemplate, answersPath)
+    const newAnswers = [
+      ...templateAnswers.slice(0, answerIndex),
+      { ...templateAnswers[answerIndex], selected: true },
+      ...templateAnswers.slice(answerIndex + 1)
+    ]
+    this.setState({
+      formData: _.set(
+        _.cloneDeep(this.state.formData),
+        answersPath,
+        newAnswers
+      )
+    })
+  }
+
+  onSelectCheckbox = ({ sectionIndex, questionIndex, answerIndex }) => {
+    const answerPath = [
+      'content',
+      `sections[${sectionIndex}]`,
+      `questions[${questionIndex}]`,
+      `answers[${answerIndex}]`
+    ].join('.')
+    const currentAnswer = _.get(this.state.formData, answerPath)
+    const newAnswer = currentAnswer.selected
+      ? _.omit(currentAnswer, 'selected')
+      : { ...currentAnswer, selected: true }
+    this.setState({
+      formData: _.set(_.cloneDeep(this.state.formData), answerPath, newAnswer)
+    })
+  }
+
+  onChangeText ({ sectionIndex, questionIndex, value }) {
+    const questionPath = [
+      'content',
+      `sections[${sectionIndex}]`,
+      `questions[${questionIndex}]`
+    ].join('.')
+    const newQuestion = {
+      ..._.omit(_.get(this.state.formData, questionPath), 'answers'),
+      answer: value
+    }
+    this.setState({
+      formData: _.set(
+        _.cloneDeep(this.state.formData),
+        questionPath,
+        newQuestion
+      )
+    })
+  }
+
+  renderText ({ sectionIndex, questionIndex }) {
+    return (
+      <label>
+        <input
+          required
+          onChange={e =>
+            this.onChangeText({
+              sectionIndex,
+              questionIndex,
+              value: e.target.value
+            })}
+        >
+          {}
+        </input>
+      </label>
     )
+  }
+
+  renderParagraph ({ sectionIndex, questionIndex }) {
+    return (
+      <label>
+        <textarea
+          required
+          onChange={e =>
+            this.onChangeText({
+              sectionIndex,
+              questionIndex,
+              value: e.target.value
+            })}
+        >
+          {}
+        </textarea>
+      </label>
+    )
+  }
+
+  renderCheckboxes ({ sectionIndex, questionIndex }) {
+    // prettier-ignore
+    const question = this
+      .props
+      .treatmentNoteTemplate
+      .content.sections[sectionIndex]
+      .questions[questionIndex]
+    return question.answers.map((_answer, answerIndex) => (
+      <label key={`answer${questionIndex}${answerIndex}`}>
+        <input
+          type='checkbox'
+          name={question.name}
+          onChange={() =>
+            this.onSelectCheckbox({ sectionIndex, questionIndex, answerIndex })}
+        />
+        {_answer.value}
+        <br />
+      </label>
+    ))
+  }
+
+  renderRadioButtons ({ sectionIndex, questionIndex }) {
+    // prettier-ignore
+    const question = this
+      .props
+      .treatmentNoteTemplate
+      .content.sections[sectionIndex]
+      .questions[questionIndex]
+    return question.answers.map((answer, answerIndex) => (
+      <label key={`answer${questionIndex}${answerIndex}`}>
+        <input
+          type='radio'
+          name={question.name}
+          onChange={() =>
+            this.onSelectRadio({ sectionIndex, questionIndex, answerIndex })}
+        />
+        {answer.value}
+        <br />
+      </label>
+    ))
   }
 
   render () {
     return (
       <form onSubmit={this.onSubmit}>
-        <h1>{this.props.treatmentNote.name} Assessment</h1>
-        {this.props.treatmentNote.sections.map((section, sectionIndex) => (
-          <div key={`section${sectionIndex}`}>
-            <h2>{section.name}</h2>
-            {section.questions.map((question, questionIndex) => (
-              <div key={`question${questionIndex}`}>
-                <h3>{question.name}</h3>
-                {
-                  {
-                    RADIO_BUTTON: question.answers.map(
-                      (answer, answerIndex) => (
-                        <label key={`answer${questionIndex}${answerIndex}`}>
-                          <input
-                            type='radio'
-                            name={question.name}
-                            onChange={() =>
-                              this.onChange({
-                                sectionIndex,
-                                questionIndex,
-                                value: answer.value
-                              })
-                            }
-                          />
-                          {answer.value}
-                          <br />
-                        </label>
-                      )
-                    )
-                  }[question.type]
-                }
-              </div>
-            ))}
-          </div>
-        ))}
+        <h1>{this.props.treatmentNoteTemplate.name}</h1>
+        {this.props.treatmentNoteTemplate.content.sections.map(
+          (section, sectionIndex) => (
+            <div key={`section${sectionIndex}`}>
+              <h2>{section.name}</h2>
+              {section.questions.map((question, questionIndex) => (
+                <div key={`question${questionIndex}`}>
+                  <h3>{question.name}</h3>
+                  {{
+                    text: () =>
+                      this.renderText({ sectionIndex, questionIndex }),
+                    paragraph: () =>
+                      this.renderParagraph({ sectionIndex, questionIndex }),
+                    checkboxes: () =>
+                      this.renderCheckboxes({ sectionIndex, questionIndex }),
+                    radiobuttons: () =>
+                      this.renderRadioButtons({ sectionIndex, questionIndex })
+                  }[question.type]()}
+                </div>
+              ))}
+            </div>
+          )
+        )}
         <button type='submit'>Submit</button>
       </form>
     )

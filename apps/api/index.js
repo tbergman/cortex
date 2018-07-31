@@ -8,6 +8,7 @@ import resizer from './lib/resizer'
 import * as Lead from './models/lead'
 import * as ContentModule from './models/content-module'
 import * as Appointment from './models/appointment'
+import * as TreatmentNote from './models/treatment-note'
 
 const app = express()
 
@@ -19,13 +20,16 @@ const typeDefs = gql`
 ${Lead.schema.types}
 ${ContentModule.schema.types}
 ${Appointment.schema.types}
+${TreatmentNote.schema.types}
   type Mutation {
     ${Lead.schema.mutations}
+    ${TreatmentNote.schema.mutations}
   }
   type Query {
     ping: String
     ${ContentModule.schema.queries}
     ${Lead.schema.queries}
+    ${TreatmentNote.schema.queries}
   }
 `
 
@@ -33,12 +37,14 @@ ${Appointment.schema.types}
 const resolvers = {
   Mutation: {
     ...Lead.mutations,
-    ...ContentModule.mutations
+    ...ContentModule.mutations,
+    ...TreatmentNote.mutations
   },
   Query: {
     ping: () => 'pong',
     ...Lead.queries,
-    ...ContentModule.queries
+    ...ContentModule.queries,
+    ...TreatmentNote.queries
   }
 }
 

@@ -32,6 +32,13 @@ export const fromCliniko = appointment => ({
   endAt: appointment.ends_at
 })
 
+export const enumToId = type =>
+  Number(
+    {
+      IMPRINT_INTERVIEW: CLINIKO_IMPRINT_APPOINTMENT_TYPE_ID
+    }[type]
+  )
+
 /**
  * Fetches Cliniko appointments for a patient by email and appointment type
  *
@@ -40,9 +47,6 @@ export const fromCliniko = appointment => ({
  * @return {Array} Appointments of that type for that patient
  */
 export const findByTypeAndEmail = async (type, email) => {
-  const typeId = {
-    IMPRINT_INTERVIEW: CLINIKO_IMPRINT_APPOINTMENT_TYPE_ID
-  }[type]
   const { body: { patients: [patient] } } = await request
     .get(`${CLINIKO_API_URL}/patients`)
     .auth(CLINIKO_API_KEY, '')
@@ -52,7 +56,7 @@ export const findByTypeAndEmail = async (type, email) => {
     .get(patient.appointments.links.self)
     .auth(CLINIKO_API_KEY, '')
     .set('Accept', 'application/json')
-    .query({ q: `appointment_type_id:=${typeId}` })
+    .query({ q: `appointment_type_id:=${enumToId(type)}` })
   const appts = await Promise.all(
     appointments.map(async appt => {
       const { body: appType } = await request

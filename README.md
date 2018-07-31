@@ -6,21 +6,11 @@ The main Octave repo.
 
 ## Setup
 
-Make sure to have the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli), [NVM](https://github.com/creationix/nvm), Node 10.
+Install the [latest version of Node](https://nodejs.org/en/).
 
-```
-brew install heroku/brew/heroku
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
-nvm install 10 && nvm alias default 10
-```
+Add `export CORTEX_ENV_KEY="{{password}}"` to your ~/.bash_profile and restart your terminal/IDE. Ask Craig for the value of `{{password}}`.
 
-Copy over a .env file and fill in the blank values from [the vault](https://trello.com/c/AJRxZM44/51-vault).
-
-```
-cp .env.example .env
-```
-
-Then install dependencies and start the server
+Install node modules and start the server
 
 ```
 npm install
@@ -33,6 +23,12 @@ Before submitting a pull request make sure your code passes linting and tests.
 npm test
 ```
 
+If you need to add keys for a service or something else sensitive in the .env file then edit the .env file, run encryption, and check in the new `.env.enc` file.
+
+```
+npm run envenc
+git commit .env.enc
+```
 
 ## Tech. Architecture
 

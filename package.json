@@ -9,7 +9,8 @@
     "heroku-postbuild": "[ $CI <> true ] && echo 'skipping build' || npm run build",
     "build": "for f in apps/*; do next build $f; done",
     "start": "babel-node index.js",
-    "job": "babel-node apps/jobs/lib/cli.js"
+    "job": "babel-node apps/jobs/lib/cli.js",
+    "envenc": "envenc $CORTEX_ENV_KEY"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,7 @@
     "chalk": "^2.4.1",
     "cheerio": "^1.0.0-rc.2",
     "dotenv": "^6.0.0",
+    "envenc": "^1.0.1",
     "express": "^4.16.3",
     "graphql": "^0.13.2",
     "js-cookie": "^2.2.0",

@@ -6,15 +6,15 @@
 import React from 'react'
 import _ from 'lodash'
 import { GraphQLClient } from 'graphql-request'
+import { type, margins, colors } from 'styles'
+import Button from 'components/button'
+import Router from 'next/router'
 
 const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
 
 export default class Assessment extends React.Component {
   static async getInitialProps ({ query: { email, type } }) {
-    const apptType = type
-      .toUpperCase()
-      .split(' ')
-      .join('_')
+    const apptType = type.toUpperCase().split(' ').join('_')
     const { treatmentNoteTemplate, confirmationContent } = await gql.request(
       `query {
         treatmentNoteTemplate(appointmentType: ${apptType}) {
@@ -35,6 +35,7 @@ export default class Assessment extends React.Component {
         confirmationContent: contentModule(name: "assessmentConfirmation") {
           h1
           p
+          a
           images(width: 500 height: 500) {
             url
           }
@@ -80,7 +81,11 @@ export default class Assessment extends React.Component {
       ...templateAnswers.slice(answerIndex + 1)
     ]
     this.setState({
-      formData: _.set(_.cloneDeep(this.state.formData), answersPath, newAnswers)
+      formData: _.set(
+        _.cloneDeep(this.state.formData),
+        answersPath,
+        newAnswers
+      )
     })
   }
 
@@ -129,11 +134,23 @@ export default class Assessment extends React.Component {
               sectionIndex,
               questionIndex,
               value: e.target.value
-            })
-          }
+            })}
         >
           {}
         </input>
+        <style jsx>{`
+          label {
+            ${type.apercuS}
+            width: 100%;
+          }
+          input {
+            ${type.apercuS}
+            border: 0;
+            background-color: ${colors.coffee};
+            width: 100%;
+            padding: ${margins.xs}px;
+          }
+        `}</style>
       </label>
     )
   }
@@ -148,11 +165,23 @@ export default class Assessment extends React.Component {
               sectionIndex,
               questionIndex,
               value: e.target.value
-            })
-          }
+            })}
         >
           {}
         </textarea>
+        <style jsx>{`
+          label {
+            ${type.apercuS}
+            width: 100%;
+          }
+          textarea {
+            ${type.apercuS}
+            border: 0;
+            background-color: ${colors.coffee};
+            width: 100%;
+            padding: ${margins.xs}px;
+          }
+        `}</style>
       </label>
     )
   }
@@ -170,11 +199,18 @@ export default class Assessment extends React.Component {
           type='checkbox'
           name={question.name}
           onChange={() =>
-            this.onSelectCheckbox({ sectionIndex, questionIndex, answerIndex })
-          }
+            this.onSelectCheckbox({ sectionIndex, questionIndex, answerIndex })}
         />
         {_answer.value}
-        <br />
+        <style jsx>{`
+          label {
+            ${type.apercuS}
+            display: block;
+          }
+          input {
+            margin-right: ${margins.xs}px;
+          }
+        `}</style>
       </label>
     ))
   }
@@ -192,11 +228,19 @@ export default class Assessment extends React.Component {
           type='radio'
           name={question.name}
           onChange={() =>
-            this.onSelectRadio({ sectionIndex, questionIndex, answerIndex })
-          }
+            this.onSelectRadio({ sectionIndex, questionIndex, answerIndex })}
         />
         {answer.value}
-        <br />
+        <style jsx>{`
+          label {
+            ${type.apercuS}
+            display: block;
+          }
+          input {
+            margin-right: ${margins.xs}px;
+            background-color: ${colors.coffee};
+          }
+        `}</style>
       </label>
     ))
   }
@@ -227,7 +271,33 @@ export default class Assessment extends React.Component {
             </div>
           )
         )}
-        <button type='submit'>Submit</button>
+        <br />
+        <Button
+          fullWidth
+          variant='contained'
+          color='primary'
+          onClick={this.nextStep}
+          type='submit'
+          className='btn'
+        >
+          Submit
+        </Button>
+        <style jsx>
+          {`
+          h1 {
+            ${type.estebanL}
+            margin-bottom: ${margins.m}px;
+          }
+          h2 {
+            ${type.estebanM}
+            margin: ${margins.m}px 0 ${margins.xs}px;
+          }
+          h3 {
+            ${type.apercuS}
+            margin: ${margins.xs}px 0;
+          }
+        `}
+        </style>
       </form>
     )
   }
@@ -235,9 +305,29 @@ export default class Assessment extends React.Component {
   renderConfirmation () {
     return (
       <div>
+        <img src={this.props.confirmationContent.images[0].url} />
         <h1>{this.props.confirmationContent.h1}</h1>
         <p>{this.props.confirmationContent.p}</p>
-        <img src={this.props.confirmationContent.images[0].url} />
+        <Button
+          fullWidth
+          variant='contained'
+          color='primary'
+          onClick={() => Router.push('/')}
+        >
+          {this.props.confirmationContent.a}
+        </Button>
+        <style jsx>
+          {`
+          h1 {
+            ${type.estebanL}
+            margin: ${margins.m}px 0;
+          }
+          p {
+            ${type.apercuM}
+            margin: ${margins.m}px 0;
+          }
+        `}
+        </style>
       </div>
     )
   }

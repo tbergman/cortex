@@ -1,5 +1,8 @@
 import React from 'react'
 import { GraphQLClient } from 'graphql-request'
+import { type, margins } from 'styles'
+import Button from 'components/button'
+import Router from 'next/router'
 
 const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
 const sleep = delay => new Promise(resolve => setTimeout(resolve, delay))
@@ -10,10 +13,12 @@ export default class ImprintSchedule extends React.Component {
   }
 
   static async getInitialProps ({ query }) {
-    if (!query.leadId) throw new Error('Missing lead ID')
     const data = await gql.request(
       `query {
-        step0: contentModule(name: "imprint_schedule_step_1") {
+        lead(id: "${query.leadId}") {
+          name
+        }
+        step0: contentModule(name: "imprintScheduleStep1") {
           a
           h1
           p
@@ -21,17 +26,17 @@ export default class ImprintSchedule extends React.Component {
             url
           }
         }
-        step1: contentModule(name: "imprint_schedule_step_2") {
+        step1: contentModule(name: "imprintScheduleStep2") {
           a
           images(width: 480 height: 270) {
             url
           }
           p
         }
-        step2: contentModule(name: "imprint_schedule_step_3") {
+        step2: contentModule(name: "imprintScheduleStep3") {
           h1
         }
-        step3: contentModule(name: "imprint_schedule_step_4") {
+        step3: contentModule(name: "imprintScheduleStep4") {
           h1
           p
           a
@@ -83,7 +88,16 @@ export default class ImprintSchedule extends React.Component {
   }
 
   renderNextButton (text) {
-    return <button onClick={this.nextStep}>{text}</button>
+    return (
+      <Button
+        fullWidth
+        variant='contained'
+        color='primary'
+        onClick={this.nextStep}
+      >
+        {text}
+      </Button>
+    )
   }
 
   renderStep0 () {
@@ -93,6 +107,16 @@ export default class ImprintSchedule extends React.Component {
         <img src={this.props.step0.images[0].url} />
         <p>{this.props.step0.p}</p>
         {this.renderNextButton(this.props.step0.a)}
+        <style jsx>{`
+          h1 {
+            ${type.estebanL}
+            margin-bottom: ${margins.m}px;
+          }
+          p {
+            ${type.apercuM}
+            margin: ${margins.m}px 0;
+          }
+        `}</style>
       </div>
     )
   }
@@ -103,6 +127,12 @@ export default class ImprintSchedule extends React.Component {
         <img src={this.props.step1.images[0].url} />
         <p>{this.props.step1.p}</p>
         {this.renderNextButton(this.props.step1.a)}
+        <style jsx>{`
+          p {
+            ${type.apercuM}
+            margin: ${margins.m}px 0;
+          }
+        `}</style>
       </div>
     )
   }
@@ -115,9 +145,17 @@ export default class ImprintSchedule extends React.Component {
           src={process.env.CLINIKO_IMPRINT_CALENDAR_URL}
           frameBorder='0'
           scrolling='auto'
-          width='500'
-          height='500'
         />
+        <style jsx>{`
+          iframe {
+            height: calc(100vh - 200px);
+            width: 100%;
+          }
+          h1 {
+            ${type.estebanM}
+            margin-bottom: ${margins.m}px;
+          }
+        `}</style>
       </div>
     )
   }
@@ -127,8 +165,28 @@ export default class ImprintSchedule extends React.Component {
       <div>
         <h1>{this.props.step3.h1}</h1>
         <img src={this.props.step3.images[0].url} />
-        <br />
-        <a href='/'>{this.props.step0.a}</a>
+        <p>{this.props.step3.p}</p>
+        <Button
+          fullWidth
+          variant='contained'
+          color='primary'
+          onClick={() => Router.push('/')}
+        >
+          {this.props.step3.a}
+        </Button>
+        <style jsx>{`
+          h1 {
+            ${type.estebanL}
+            margin-bottom: ${margins.m}px;
+          }
+          p {
+            ${type.apercuM}
+            margin: ${margins.m}px 0;
+          }
+          img {
+            margin-bottom: ${margins.m}px;
+          }
+        `}</style>
       </div>
     )
   }

@@ -96,7 +96,7 @@ const createTreatmentNote = async (_root, args) => {
     .set('Accept', 'application/json')
     .send({
       title,
-      draft: true,
+      draft: false,
       content: args.content,
       patient_id: patient.id,
       treatment_note_template_id: apptTypeId

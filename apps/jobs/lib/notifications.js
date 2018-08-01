@@ -26,7 +26,7 @@ const mgun = mailgun({
 })
 
 const notificationContent = async notificationName => {
-  const records = await at.findAll({
+  const records = await at.find({
     table: 'notifications',
     filter: `name = '${notificationName}'`
   })
@@ -75,7 +75,7 @@ export const sendToleads = async (
   signupStage,
   notificationName = signupStage
 ) => {
-  const leads = await at.findAll({
+  const leads = await at.find({
     table: 'leads',
     filter: `{Signup Stage} = '${signupStage}'`
   })

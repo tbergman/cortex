@@ -5,47 +5,54 @@
  */
 import React from 'react'
 import _ from 'lodash'
-import request from 'superagent'
+import { GraphQLClient } from 'graphql-request'
+
+const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
 
 export default class Assessment extends React.Component {
   static async getInitialProps ({ query: { email, type } }) {
-    const apptType = type.toUpperCase().split(' ').join('_')
-    const { body: { data: { treatmentNoteTemplate } } } = await request
-      .post(process.env.APP_URL + '/api')
-      .send({
-        query: `
-          query {
-            treatmentNoteTemplate(appointmentType: ${apptType}) {
+    const apptType = type
+      .toUpperCase()
+      .split(' ')
+      .join('_')
+    const { treatmentNoteTemplate, confirmationContent } = await gql.request(
+      `query {
+        treatmentNoteTemplate(appointmentType: ${apptType}) {
+          name
+          content {
+            sections {
               name
-              content {
-                sections {
-                  name
-                  questions {
-                    name
-                    type
-                    answers {
-                      value
-                    }
-                  }
+              questions {
+                name
+                type
+                answers {
+                  value
                 }
               }
             }
           }
-        `
-      })
-    return { treatmentNoteTemplate, email }
+        }
+        confirmationContent: contentModule(name: "assessmentConfirmation") {
+          h1
+          p
+          images(width: 500 height: 500) {
+            url
+          }
+        }
+      }`
+    )
+    return { treatmentNoteTemplate, confirmationContent, email }
   }
 
   constructor (props) {
     super(props)
-    this.state = { formData: props.treatmentNoteTemplate }
+    this.state = { formData: props.treatmentNoteTemplate, confirmed: false }
   }
 
   onSubmit = async event => {
     event.preventDefault()
-    await request.post(process.env.APP_URL + '/api').send({
-      query: `
-      mutation CreateTreatmentNote($content: TreatmentNoteInputContent!) {
+    await gql.request(
+      `mutation CreateTreatmentNote($content: TreatmentNoteInputContent!) {
         createTreatmentNote(
           email: "${this.props.email}"
           content: $content
@@ -53,10 +60,10 @@ export default class Assessment extends React.Component {
         ) {
           name
         }
-      }
-      `,
-      variables: { content: this.state.formData.content }
-    })
+      }`,
+      { content: this.state.formData.content }
+    )
+    this.setState({ confirmed: true })
   }
 
   onSelectRadio = ({ sectionIndex, questionIndex, answerIndex }) => {
@@ -73,11 +80,7 @@ export default class Assessment extends React.Component {
       ...templateAnswers.slice(answerIndex + 1)
     ]
     this.setState({
-      formData: _.set(
-        _.cloneDeep(this.state.formData),
-        answersPath,
-        newAnswers
-      )
+      formData: _.set(_.cloneDeep(this.state.formData), answersPath, newAnswers)
     })
   }
 
@@ -126,7 +129,8 @@ export default class Assessment extends React.Component {
               sectionIndex,
               questionIndex,
               value: e.target.value
-            })}
+            })
+          }
         >
           {}
         </input>
@@ -144,7 +148,8 @@ export default class Assessment extends React.Component {
               sectionIndex,
               questionIndex,
               value: e.target.value
-            })}
+            })
+          }
         >
           {}
         </textarea>
@@ -165,7 +170,8 @@ export default class Assessment extends React.Component {
           type='checkbox'
           name={question.name}
           onChange={() =>
-            this.onSelectCheckbox({ sectionIndex, questionIndex, answerIndex })}
+            this.onSelectCheckbox({ sectionIndex, questionIndex, answerIndex })
+          }
         />
         {_answer.value}
         <br />
@@ -186,7 +192,8 @@ export default class Assessment extends React.Component {
           type='radio'
           name={question.name}
           onChange={() =>
-            this.onSelectRadio({ sectionIndex, questionIndex, answerIndex })}
+            this.onSelectRadio({ sectionIndex, questionIndex, answerIndex })
+          }
         />
         {answer.value}
         <br />
@@ -194,7 +201,7 @@ export default class Assessment extends React.Component {
     ))
   }
 
-  render () {
+  renderForm () {
     return (
       <form onSubmit={this.onSubmit}>
         <h1>{this.props.treatmentNoteTemplate.name}</h1>
@@ -223,5 +230,19 @@ export default class Assessment extends React.Component {
         <button type='submit'>Submit</button>
       </form>
     )
+  }
+
+  renderConfirmation () {
+    return (
+      <div>
+        <h1>{this.props.confirmationContent.h1}</h1>
+        <p>{this.props.confirmationContent.p}</p>
+        <img src={this.props.confirmationContent.images[0].url} />
+      </div>
+    )
+  }
+
+  render () {
+    return this.state.confirmed ? this.renderConfirmation() : this.renderForm()
   }
 }

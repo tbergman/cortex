@@ -1,12 +1,12 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Checkbox from '@material-ui/core/Checkbox';
+import FormLabel from '@material-ui/core/FormLabel'
+import FormControl from '@material-ui/core/FormControl'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormHelperText from '@material-ui/core/FormHelperText'
+import Checkbox from '@material-ui/core/Checkbox'
 import request from 'superagent'
 
 export default class Body extends React.Component {
@@ -39,13 +39,12 @@ export default class Body extends React.Component {
   }
 
   handleChange = name => event => {
-    this.setState({ [name]: event.target.checked });
-  };
+    this.setState({ [name]: event.target.checked })
+  }
 
   inputProps = fieldName => {
     return { id: fieldName, onChange: this.onChange(fieldName) }
   }
-  
 
   render () {
     return (
@@ -153,9 +152,7 @@ export default class Body extends React.Component {
 
         <section className='form'>
           <div className='container'>
-            <h4>
-              Be the first to know about events and launch dates.
-            </h4>
+            <h4>Be the first to know about events and launch dates.</h4>
             <form id='landingLeadGen' onSubmit={this.onSubmit}>
               <TextField
                 {...this.inputProps('name')}
@@ -174,6 +171,14 @@ export default class Body extends React.Component {
               />
               <br />
               <TextField
+                {...this.inputProps('phone')}
+                fullWidth
+                label='Phone Number'
+                margin='normal'
+                required
+              />
+              <br />
+              <TextField
                 {...this.inputProps('zipcode')}
                 fullWidth
                 label='Zip Code'
@@ -182,43 +187,45 @@ export default class Body extends React.Component {
               />
               <br />
               <br />
-                <FormLabel component="legend">What services are you interested in?</FormLabel>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={this.state.therapyCheck}
-                        onChange={this.handleChange('therapyCheck')}
-                        color='primary'
-                        value='therapyCheck'
-                      />
-                    }
-                    label="Therapy"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={this.state.coachingCheck}
-                        onChange={this.handleChange('coachingCheck')}
-                        color='primary'
-                        value='coachingCheck'
-                      />
-                    }
-                    label="Coaching"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={this.state.classesCheck}
-                        onChange={this.handleChange('classesCheck')}
-                        color='primary'
-                        value='classesCheck'
-                      />
-                    }
-                    label="Classes"
-                  />
-                </FormGroup>
-                <FormHelperText>Select all that apply</FormHelperText>
+              <FormLabel component='legend'>
+                What services are you interested in?
+              </FormLabel>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={this.state.therapyCheck}
+                      onChange={this.handleChange('therapyCheck')}
+                      color='primary'
+                      value='therapyCheck'
+                    />
+                  }
+                  label='Therapy'
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={this.state.coachingCheck}
+                      onChange={this.handleChange('coachingCheck')}
+                      color='primary'
+                      value='coachingCheck'
+                    />
+                  }
+                  label='Coaching'
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={this.state.classesCheck}
+                      onChange={this.handleChange('classesCheck')}
+                      color='primary'
+                      value='classesCheck'
+                    />
+                  }
+                  label='Classes'
+                />
+              </FormGroup>
+              <FormHelperText>Select all that apply</FormHelperText>
               <br />
               <br />
               <Button

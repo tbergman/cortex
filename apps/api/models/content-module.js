@@ -129,7 +129,7 @@ export const airtableToModel = record => {
 }
 
 export const contentModules = async (_root, args) => {
-  const records = await at.findAll({
+  const records = await at.find({
     table: 'contentModules',
     filter: `name = '${args.name}'`
   })

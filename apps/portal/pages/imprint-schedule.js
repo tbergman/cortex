@@ -1,6 +1,7 @@
 import React from 'react'
-import request from 'superagent'
+import { GraphQLClient } from 'graphql-request'
 
+const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
 const sleep = delay => new Promise(resolve => setTimeout(resolve, delay))
 
 export default class ImprintSchedule extends React.Component {
@@ -10,8 +11,8 @@ export default class ImprintSchedule extends React.Component {
 
   static async getInitialProps ({ query }) {
     if (!query.leadId) throw new Error('Missing lead ID')
-    const res = await request.post(process.env.APP_URL + '/api').send({
-      query: `query {
+    const data = await gql.request(
+      `query {
         step0: contentModule(name: "imprint_schedule_step_1") {
           a
           h1
@@ -39,26 +40,38 @@ export default class ImprintSchedule extends React.Component {
           }
         }
       }`
-    })
-    return { ...res.body.data, leadId: query.leadId }
+    )
+    return { ...data, leadId: query.leadId }
+  }
+
+  componentDidMount () {
+    this.pollForImprintInterviewAdded()
   }
 
   pollForImprintInterviewAdded = async () => {
-    const res = await request.post(process.env.APP_URL + '/api').send({
-      query: `query {
+    const res = await gql.request(
+      `query {
         lead(id: "${this.props.leadId}") {
           name
           email
           phone
-          appointments(type:IMPRINT_INTERVIEW) {
+          appointments(type: IMPRINT_INTERVIEW) {
             name
           }
         }
       }`
-    })
-    const appointment = res.body.data.lead.appointments[0]
+    )
+    const { lead: { appointments: [appointment] } } = res
     if (appointment) {
-      this.nextStep()
+      await gql.request(
+        `mutation {
+          updateLead(
+            id: "${this.props.leadId}"
+            signupStage: IMPRINTING
+          ) { name }
+        }`
+      )
+      this.setState({ step: 3 })
     } else {
       await sleep(Number(process.env.CLINIKO_POLL_INTERVAL))
       return this.pollForImprintInterviewAdded()
@@ -66,7 +79,6 @@ export default class ImprintSchedule extends React.Component {
   }
 
   nextStep = () => {
-    if (this.state.step === 1) this.pollForImprintInterviewAdded()
     this.setState({ step: this.state.step + 1 })
   }
 

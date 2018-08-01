@@ -5,12 +5,21 @@
  * Currently, all appointments are stored in Cliniko.
  */
 import request from 'superagent'
+import _ from 'lodash'
 
 const {
   CLINIKO_API_KEY,
   CLINIKO_API_URL,
-  CLINIKO_IMPRINT_APPOINTMENT_TYPE_ID
+  CLINIKO_COACH_SESSION_ID,
+  CLINIKO_IMPRINT_INTERVIEW_ID,
+  CLINIKO_THERAPY_SESSION_ID
 } = process.env
+
+const appointmentTypesMap = {
+  COACH_SESSION: CLINIKO_COACH_SESSION_ID,
+  IMPRINT_INTERVIEW: CLINIKO_IMPRINT_INTERVIEW_ID,
+  THERAPY_SESSION: CLINIKO_THERAPY_SESSION_ID
+}
 
 export const schema = {
   types: `
@@ -21,7 +30,7 @@ export const schema = {
       endAt: String
     }
     enum AppointmentType {
-      IMPRINT_INTERVIEW
+      ${_.keys(appointmentTypesMap).join(' ')}
     }
   `
 }
@@ -32,12 +41,7 @@ export const fromCliniko = appointment => ({
   endAt: appointment.ends_at
 })
 
-export const enumToId = type =>
-  Number(
-    {
-      IMPRINT_INTERVIEW: CLINIKO_IMPRINT_APPOINTMENT_TYPE_ID
-    }[type]
-  )
+export const enumToId = type => Number(appointmentTypesMap[type])
 
 /**
  * Fetches Cliniko appointments for a patient by email and appointment type

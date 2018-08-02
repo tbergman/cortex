@@ -7,11 +7,9 @@
  * https://github.com/redguava/cliniko-api/blob/master/sections/treatment_notes.md
  *
  */
-import request from 'superagent'
 import * as Appointment from './appointment'
 import _ from 'lodash'
-
-const { CLINIKO_API_KEY, CLINIKO_API_URL } = process.env
+import * as cliniko from 'cliniko'
 
 const treamentNoteTypes = modelType => {
   const namespace = {
@@ -71,36 +69,32 @@ export const schema = {
 
 const treatmentNoteTemplate = async (_root, args) => {
   const apptTypeId = Appointment.enumToId(args.appointmentType)
-  const { body: apptType } = await request
-    .get(`${CLINIKO_API_URL}/appointment_types/${apptTypeId}`)
-    .auth(CLINIKO_API_KEY, '')
-    .set('Accept', 'application/json')
-  const { body: treatmentNoteTemplate } = await request
-    .get(apptType.treatment_note_template.links.self)
-    .auth(CLINIKO_API_KEY, '')
-    .set('Accept', 'application/json')
+  const apptType = await cliniko.find({
+    resource: `appointment_types/${apptTypeId}`
+  })
+  const treatmentNoteTemplate = await cliniko.find({
+    url: apptType.treatment_note_template.links.self
+  })
   return treatmentNoteTemplate
 }
 
 const createTreatmentNote = async (_root, args) => {
   const title = _.capitalize(args.appointmentType.split('_').join(' '))
   const apptTypeId = Appointment.enumToId(args.appointmentType)
-  const { body: { patients: [patient] } } = await request
-    .get(`${CLINIKO_API_URL}/patients`)
-    .auth(CLINIKO_API_KEY, '')
-    .set('Accept', 'application/json')
-    .query({ q: `email:=${args.email}` })
-  await request
-    .post(`${CLINIKO_API_URL}/treatment_notes`)
-    .auth(CLINIKO_API_KEY, '')
-    .set('Accept', 'application/json')
-    .send({
-      title,
-      draft: false,
+  const [patient] = await cliniko.find({
+    resource: 'patients',
+    q: `email:=${args.email}`
+  })
+  await cliniko.create({
+    resource: 'treatment_notes',
+    data: {
       content: args.content,
+      draft: false,
       patient_id: patient.id,
+      title,
       treatment_note_template_id: apptTypeId
-    })
+    }
+  })
   return { name: title, content: args.content }
 }
 

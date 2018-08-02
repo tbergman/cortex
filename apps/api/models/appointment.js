@@ -4,12 +4,10 @@
  * models for additional metadata specific to the type of appointment.
  * Currently, all appointments are stored in Cliniko.
  */
-import request from 'superagent'
 import _ from 'lodash'
+import * as cliniko from 'cliniko'
 
 const {
-  CLINIKO_API_KEY,
-  CLINIKO_API_URL,
   CLINIKO_COACH_SESSION_ID,
   CLINIKO_IMPRINT_INTERVIEW_ID,
   CLINIKO_THERAPY_SESSION_ID
@@ -51,22 +49,20 @@ export const enumToId = type => Number(appointmentTypesMap[type])
  * @return {Array} Appointments of that type for that patient
  */
 export const findByTypeAndEmail = async (type, email) => {
-  const { body: { patients: [patient] } } = await request
-    .get(`${CLINIKO_API_URL}/patients`)
-    .auth(CLINIKO_API_KEY, '')
-    .set('Accept', 'application/json')
-    .query({ q: `email:=${email}` })
-  const { body: { appointments } } = await request
-    .get(patient.appointments.links.self)
-    .auth(CLINIKO_API_KEY, '')
-    .set('Accept', 'application/json')
-    .query({ q: `appointment_type_id:=${enumToId(type)}` })
+  const [patient] = await cliniko.find({
+    resource: 'patients',
+    q: `email:=${email}`
+  })
+  const { appointments } = await cliniko.find({
+    url: patient.appointments.links.self,
+    q: `appointment_type_id:=${enumToId(type)}`
+  })
   const appts = await Promise.all(
     appointments.map(async appt => {
-      const { body: appType } = await request
-        .get(appt.appointment_type.links.self)
-        .auth(CLINIKO_API_KEY, '')
-        .set('Accept', 'application/json')
+      const appType = await cliniko.find({
+        url: appt.appointment_type.links.self,
+        q: `appointment_type_id:=${enumToId(type)}`
+      })
       return fromCliniko({ ...appt, appointment_type: appType })
     })
   )

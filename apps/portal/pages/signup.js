@@ -8,7 +8,8 @@ const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
 
 export default class Signup extends React.Component {
   state = {
-    step: 0
+    step: 0,
+    tourStep: 0
   }
 
   static async getInitialProps ({ query: { email, type } }) {
@@ -62,17 +63,19 @@ export default class Signup extends React.Component {
 
   renderStep0 () {
     return (
-      <h1>
-        Welcome
+      <div>
+        <img src={this.props.signupWelcome.images[0].url} />
+        <h1>{this.props.signupWelcome.h1}</h1>
+        <p>{this.props.signupWelcome.p}</p>
         {this.renderNextButton(this.props.signupWelcome.a)}
-      </h1>
+      </div>
     )
   }
 
   renderStep1 () {
     return (
       <h1>
-        Account
+        Auth0 goes here
         {this.renderNextButton('Next')}
       </h1>
     )
@@ -81,7 +84,9 @@ export default class Signup extends React.Component {
   renderStep2 () {
     return (
       <h1>
-        Billing
+        <img src={this.props.signupBilling.images[0].url} />
+        <h1>{this.props.signupBilling.h1}</h1>
+        <p>{this.props.signupBilling.p}</p>
         {this.renderNextButton(this.props.signupBilling.a)}
       </h1>
     )
@@ -90,7 +95,16 @@ export default class Signup extends React.Component {
   renderStep3 () {
     return (
       <h1>
-        Tour
+        <div>
+          <Button
+            onClick={() => this.setState({ tourStep: this.state.tourStep + 1 })}
+          >
+            Next
+          </Button>
+          <img src={this.props.signupTour.images[this.state.tourStep].url} />
+          <h1>{this.props.signupTour.h1[this.state.tourStep]}</h1>
+          <p>{this.props.signupTour.p[this.state.tourStep]}</p>
+        </div>
         <Link href='/'>
           <Button
             fullWidth

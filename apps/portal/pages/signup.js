@@ -1,41 +1,111 @@
+import { GraphQLClient } from 'graphql-request'
+import Button from 'components/button'
+import Link from 'next/link'
 import React from 'react'
-import Cookie from 'js-cookie'
+import Router from 'next/router'
 
-export default class Body extends React.Component {
+const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
+
+export default class Signup extends React.Component {
   state = {
-    user: null
+    step: 0
   }
 
-  async componentDidMount () {
-    const user = await this.maybeSignupAndGetUser()
-    this.setState({ user })
-  }
-
-  async maybeSignupAndGetUser () {
-    if (Cookie.get('jwt')) return JSON.parse(Cookie.get('jwt'))
-    const Auth0Lock = require('auth0-lock').default
-    const lock = new Auth0Lock(
-      process.env.AUTH0_CLIENT_ID,
-      process.env.AUTH0_DOMAIN
-    )
-    await new Promise((resolve, reject) => {
-      lock.on('authenticated', authResult => {
-        lock.getUserInfo(authResult.accessToken, (err, jwt) => {
-          if (err) reject(err)
-          else {
-            Cookie.set('jwt', JSON.stringify(jwt))
-            resolve(jwt)
+  static async getInitialProps ({ query: { email, type } }) {
+    const { signupWelcome, signupBilling, signupTour } = await gql.request(
+      `query {
+        signupWelcome: contentModule(name: "signupWelcome") {
+          h1
+          p
+          a
+          images(width: 500 height: 500) {
+            url
           }
-        })
-      })
-      lock.show({ initialScreen: 'signUp' })
-    })
-  }
-  render () {
-    return this.state.user ? (
-      <h1>Welcome {this.state.user.name}</h1>
-    ) : (
-      <p>Loading...</p>
+        }
+        signupBilling: contentModule(name: "signupBilling") {
+          h1
+          p
+          a
+          images(width: 500 height: 500) {
+            url
+          }
+        }
+        signupTour: contentModule(name: "signupTour") {
+          h1
+          p
+          a
+          images(width: 500 height: 500) {
+            url
+          }
+        }
+      }`
     )
+    return { signupWelcome, signupBilling, signupTour }
+  }
+
+  nextStep = () => {
+    this.setState({ step: this.state.step + 1 })
+  }
+
+  renderNextButton (text) {
+    return (
+      <Button
+        fullWidth
+        variant='contained'
+        color='primary'
+        onClick={this.nextStep}
+      >
+        {text}
+      </Button>
+    )
+  }
+
+  renderStep0 () {
+    return (
+      <h1>
+        Welcome
+        {this.renderNextButton(this.props.signupWelcome.a)}
+      </h1>
+    )
+  }
+
+  renderStep1 () {
+    return (
+      <h1>
+        Account
+        {this.renderNextButton('Next')}
+      </h1>
+    )
+  }
+
+  renderStep2 () {
+    return (
+      <h1>
+        Billing
+        {this.renderNextButton(this.props.signupBilling.a)}
+      </h1>
+    )
+  }
+
+  renderStep3 () {
+    return (
+      <h1>
+        Tour
+        <Link href='/'>
+          <Button
+            fullWidth
+            variant='contained'
+            color='primary'
+            onClick={() => Router.push('/')}
+          >
+            {this.props.signupTour.a}
+          </Button>
+        </Link>
+      </h1>
+    )
+  }
+
+  render () {
+    return this['renderStep' + this.state.step]()
   }
 }

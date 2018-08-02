@@ -31,15 +31,15 @@ export default class Doc extends Document {
           </div>
           <style jsx>
             {`
-            body {
-              background: ${colors.dustyRose};
-            }
-            #container {
-              max-width: 375px;
-              margin: auto;
-              padding-top: ${navHeight + margins.m}px;
-            }
-          `}
+              body {
+                background: ${colors.dustyRose};
+              }
+              #container {
+                max-width: 375px;
+                margin: auto;
+                padding-top: ${navHeight + margins.m}px;
+              }
+            `}
           </style>
         </body>
       </html>

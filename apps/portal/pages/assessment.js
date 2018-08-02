@@ -14,7 +14,10 @@ const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
 
 export default class Assessment extends React.Component {
   static async getInitialProps ({ query: { email, type } }) {
-    const apptType = type.toUpperCase().split(' ').join('_')
+    const apptType = type
+      .toUpperCase()
+      .split(' ')
+      .join('_')
     const { treatmentNoteTemplate, confirmationContent } = await gql.request(
       `query {
         treatmentNoteTemplate(appointmentType: ${apptType}) {
@@ -81,11 +84,7 @@ export default class Assessment extends React.Component {
       ...templateAnswers.slice(answerIndex + 1)
     ]
     this.setState({
-      formData: _.set(
-        _.cloneDeep(this.state.formData),
-        answersPath,
-        newAnswers
-      )
+      formData: _.set(_.cloneDeep(this.state.formData), answersPath, newAnswers)
     })
   }
 
@@ -134,18 +133,17 @@ export default class Assessment extends React.Component {
               sectionIndex,
               questionIndex,
               value: e.target.value
-            })}
+            })
+          }
         >
           {}
         </input>
         <style jsx>{`
           label {
-            ${type.apercuS}
-            width: 100%;
+            ${type.apercuS} width: 100%;
           }
           input {
-            ${type.apercuS}
-            border: 0;
+            ${type.apercuS} border: 0;
             background-color: ${colors.coffee};
             width: 100%;
             padding: ${margins.xs}px;
@@ -165,18 +163,17 @@ export default class Assessment extends React.Component {
               sectionIndex,
               questionIndex,
               value: e.target.value
-            })}
+            })
+          }
         >
           {}
         </textarea>
         <style jsx>{`
           label {
-            ${type.apercuS}
-            width: 100%;
+            ${type.apercuS} width: 100%;
           }
           textarea {
-            ${type.apercuS}
-            border: 0;
+            ${type.apercuS} border: 0;
             background-color: ${colors.coffee};
             width: 100%;
             padding: ${margins.xs}px;
@@ -199,13 +196,13 @@ export default class Assessment extends React.Component {
           type='checkbox'
           name={question.name}
           onChange={() =>
-            this.onSelectCheckbox({ sectionIndex, questionIndex, answerIndex })}
+            this.onSelectCheckbox({ sectionIndex, questionIndex, answerIndex })
+          }
         />
         {_answer.value}
         <style jsx>{`
           label {
-            ${type.apercuS}
-            display: block;
+            ${type.apercuS} display: block;
           }
           input {
             margin-right: ${margins.xs}px;
@@ -228,13 +225,13 @@ export default class Assessment extends React.Component {
           type='radio'
           name={question.name}
           onChange={() =>
-            this.onSelectRadio({ sectionIndex, questionIndex, answerIndex })}
+            this.onSelectRadio({ sectionIndex, questionIndex, answerIndex })
+          }
         />
         {answer.value}
         <style jsx>{`
           label {
-            ${type.apercuS}
-            display: block;
+            ${type.apercuS} display: block;
           }
           input {
             margin-right: ${margins.xs}px;
@@ -284,19 +281,16 @@ export default class Assessment extends React.Component {
         </Button>
         <style jsx>
           {`
-          h1 {
-            ${type.estebanL}
-            margin-bottom: ${margins.m}px;
-          }
-          h2 {
-            ${type.estebanM}
-            margin: ${margins.m}px 0 ${margins.xs}px;
-          }
-          h3 {
-            ${type.apercuS}
-            margin: ${margins.xs}px 0;
-          }
-        `}
+            h1 {
+              ${type.estebanL} margin-bottom: ${margins.m}px;
+            }
+            h2 {
+              ${type.estebanM} margin: ${margins.m}px 0 ${margins.xs}px;
+            }
+            h3 {
+              ${type.apercuS} margin: ${margins.xs}px 0;
+            }
+          `}
         </style>
       </form>
     )
@@ -318,15 +312,13 @@ export default class Assessment extends React.Component {
         </Button>
         <style jsx>
           {`
-          h1 {
-            ${type.estebanL}
-            margin: ${margins.m}px 0;
-          }
-          p {
-            ${type.apercuM}
-            margin: ${margins.m}px 0;
-          }
-        `}
+            h1 {
+              ${type.estebanL} margin: ${margins.m}px 0;
+            }
+            p {
+              ${type.apercuM} margin: ${margins.m}px 0;
+            }
+          `}
         </style>
       </div>
     )

@@ -109,12 +109,10 @@ export default class ImprintSchedule extends React.Component {
         {this.renderNextButton(this.props.step0.a)}
         <style jsx>{`
           h1 {
-            ${type.estebanL}
-            margin-bottom: ${margins.m}px;
+            ${type.estebanL} margin-bottom: ${margins.m}px;
           }
           p {
-            ${type.apercuM}
-            margin: ${margins.m}px 0;
+            ${type.apercuM} margin: ${margins.m}px 0;
           }
         `}</style>
       </div>
@@ -129,8 +127,7 @@ export default class ImprintSchedule extends React.Component {
         {this.renderNextButton(this.props.step1.a)}
         <style jsx>{`
           p {
-            ${type.apercuM}
-            margin: ${margins.m}px 0;
+            ${type.apercuM} margin: ${margins.m}px 0;
           }
         `}</style>
       </div>
@@ -152,8 +149,7 @@ export default class ImprintSchedule extends React.Component {
             width: 100%;
           }
           h1 {
-            ${type.estebanM}
-            margin-bottom: ${margins.m}px;
+            ${type.estebanM} margin-bottom: ${margins.m}px;
           }
         `}</style>
       </div>
@@ -176,12 +172,10 @@ export default class ImprintSchedule extends React.Component {
         </Button>
         <style jsx>{`
           h1 {
-            ${type.estebanL}
-            margin-bottom: ${margins.m}px;
+            ${type.estebanL} margin-bottom: ${margins.m}px;
           }
           p {
-            ${type.apercuM}
-            margin: ${margins.m}px 0;
+            ${type.apercuM} margin: ${margins.m}px 0;
           }
           img {
             margin-bottom: ${margins.m}px;

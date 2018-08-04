@@ -1,4 +1,4 @@
-import ImprintSchedule from '../../pages/imprint-schedule'
+import ImprintSchedule from '../../pages/consult-schedule'
 import { shallow } from 'enzyme'
 
 test('renders Clinko', () => {

@@ -5,6 +5,7 @@
 import * as at from 'at'
 import * as cliniko from 'cliniko'
 import * as Appointment from './appointment'
+import _ from 'lodash'
 
 const fields = (method = 'read') =>
   `
@@ -15,13 +16,20 @@ const fields = (method = 'read') =>
   signupStage: LeadSignupStage
 `
 
+const signupStageMap = {
+  referral: 'REFERRAL',
+  consulting: 'CONSULTING',
+  schedulingCoaching: 'SCHEDULING_COACHING',
+  schedulingTherapy: 'SCHEDULING_THERAPY',
+  schedulingBoth: 'SCHEDULING_BOTH',
+  onboarding: 'ONBOARDING',
+  onboarded: 'ONBOARDED'
+}
+
 export const schema = {
   types: `
     enum LeadSignupStage {
-      PREBOARDING
-      CONSULTING
-      ONBOARDING
-      ONBOARDED
+      ${_.values(signupStageMap).join(' ')}
     }
     type Lead {
       ${fields('read')}
@@ -42,7 +50,7 @@ export const toAirtable = args => ({
   Name: args.name,
   'Email Address': args.email,
   'Phone Number': args.phone,
-  'Signup Stage': args.signupStage && args.signupStage.toLowerCase()
+  'Signup Stage': _.invert(signupStageMap)[args.signupStage]
 })
 
 export const fromAirtable = record => ({
@@ -50,7 +58,7 @@ export const fromAirtable = record => ({
   name: record.Name,
   email: record['Email Address'],
   phone: record['Phone Number'],
-  signupStage: record['Signup Stage'] && record['Signup Stage'].toUpperCase()
+  signupStage: signupStageMap[record['Signup Stage']]
 })
 
 export const toCliniko = args => ({

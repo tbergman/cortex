@@ -16,6 +16,7 @@ export default class LoopSchedule extends React.Component {
       `query {
         lead(id: "${query.leadId}") {
           name
+          signupStage
         }
       }`
     )
@@ -28,7 +29,12 @@ export default class LoopSchedule extends React.Component {
         leadId: this.props.leadId,
         type: 'COACHING'
       })
-      this.setState({ step: 'CoachConfirm' })
+      this.setState({
+        step:
+          this.props.lead.signupStage === 'SCHEDULING_COACHING'
+            ? 'Billing'
+            : 'TherapySchedule'
+      })
     } else if (this.state.step === 'TherapySchedule') {
       await Appointment.pollForAdded({
         leadId: this.props.leadId,
@@ -55,7 +61,12 @@ export default class LoopSchedule extends React.Component {
     return (
       <div>
         Init
-        {this.renderNextButton('Next', 'CoachSchedule')}
+        {this.renderNextButton(
+          'Next',
+          this.props.lead.signupStage === 'SCHEDULING_THERAPY'
+            ? 'TherapySchedule'
+            : 'CoachSchedule'
+        )}
       </div>
     )
   }
@@ -70,11 +81,11 @@ export default class LoopSchedule extends React.Component {
         />
         <style jsx>
           {`
-          iframe {
-            width: 100%;
-            height: calc(100vh - 200px);
-          }
-        `}
+            iframe {
+              width: 100%;
+              height: calc(100vh - 200px);
+            }
+          `}
         </style>
       </div>
     )
@@ -98,14 +109,13 @@ export default class LoopSchedule extends React.Component {
           scrolling='auto'
         />
         Therapy Schedule
-        {this.renderNextButton('Next', 'TherapyConfirm')}
         <style jsx>
           {`
-          iframe {
-            width: 100%;
-            height: calc(100vh - 200px);
-          }
-        `}
+            iframe {
+              width: 100%;
+              height: calc(100vh - 200px);
+            }
+          `}
         </style>
       </div>
     )

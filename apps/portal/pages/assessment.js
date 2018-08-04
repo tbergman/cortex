@@ -60,7 +60,7 @@ export default class Assessment extends React.Component {
         createTreatmentNote(
           email: "${this.props.email}"
           content: $content
-          appointmentType: IMPRINT_INTERVIEW
+          appointmentType: CONSULT_INTERVIEW
         ) {
           name
         }

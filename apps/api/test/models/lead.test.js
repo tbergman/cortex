@@ -45,6 +45,6 @@ test('createLead adds a lead to Airtable', async () => {
 test('appointments finds appointments by type for a lead', async () => {
   await Lead.appointments({ email: 'karen@horney.com' })()
   const args = Appointment.findByTypeAndEmail.mock.calls[0]
-  expect(args[0]).toEqual('IMPRINT_INTERVIEW')
+  expect(args[0]).toEqual('CONSULT_INTERVIEW')
   expect(args[1]).toEqual('karen@horney.com')
 })

@@ -19,7 +19,7 @@ export const schema = {
   types: `
     enum LeadSignupStage {
       PREBOARDING
-      IMPRINTING
+      CONSULTING
       ONBOARDING
       ONBOARDED
     }
@@ -59,8 +59,8 @@ export const toCliniko = args => ({
   email: args.email
 })
 
-export const appointments = lead => () =>
-  Appointment.findByTypeAndEmail('IMPRINT_INTERVIEW', lead.email)
+export const appointments = lead => args =>
+  Appointment.findByTypeAndEmail(args.type, lead.email)
 
 export const lead = async (_root, args) => {
   const record = await at.findOne({ table: 'leads', id: args.id })

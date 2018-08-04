@@ -3,9 +3,9 @@ import { GraphQLClient } from 'graphql-request'
 import { type, margins } from 'styles'
 import Button from 'components/button'
 import Router from 'next/router'
+import * as Appointment from '../lib/appointment'
 
 const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
-const sleep = delay => new Promise(resolve => setTimeout(resolve, delay))
 
 export default class ConsultSchedule extends React.Component {
   state = {
@@ -50,37 +50,23 @@ export default class ConsultSchedule extends React.Component {
   }
 
   componentDidMount () {
-    this.pollForImprintInterviewAdded()
+    this.pollForConsultInterviewAdded()
   }
 
-  pollForImprintInterviewAdded = async () => {
-    const res = await gql.request(
-      `query {
-        lead(id: "${this.props.leadId}") {
-          name
-          email
-          phone
-          appointments(type: IMPRINT_INTERVIEW) {
-            name
-          }
-        }
+  pollForConsultInterviewAdded = async () => {
+    await Appointment.pollForAdded({
+      leadId: this.props.leadId,
+      type: 'CONSULT_INTERVIEW'
+    })
+    await gql.request(
+      `mutation {
+        updateLead(
+          id: "${this.props.leadId}"
+          signupStage: CONSULTING
+        ) { name }
       }`
     )
-    const { lead: { appointments: [appointment] } } = res
-    if (appointment) {
-      await gql.request(
-        `mutation {
-          updateLead(
-            id: "${this.props.leadId}"
-            signupStage: IMPRINTING
-          ) { name }
-        }`
-      )
-      this.setState({ step: 3 })
-    } else {
-      await sleep(Number(process.env.CLINIKO_POLL_INTERVAL))
-      return this.pollForImprintInterviewAdded()
-    }
+    this.setState({ step: 3 })
   }
 
   nextStep = () => {
@@ -139,7 +125,7 @@ export default class ConsultSchedule extends React.Component {
       <div>
         <h1>{this.props.step2.h1}</h1>
         <iframe
-          src={process.env.CLINIKO_IMPRINT_CALENDAR_URL}
+          src={process.env.CLINIKO_CONSULT_CALENDAR_URL}
           frameBorder='0'
           scrolling='auto'
         />

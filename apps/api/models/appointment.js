@@ -8,15 +8,15 @@ import _ from 'lodash'
 import * as cliniko from 'cliniko'
 
 const {
-  CLINIKO_COACH_SESSION_ID,
-  CLINIKO_IMPRINT_INTERVIEW_ID,
-  CLINIKO_THERAPY_SESSION_ID
+  CLINIKO_COACHING_ID,
+  CLINIKO_CONSULT_INTERVIEW_ID,
+  CLINIKO_THERAPY_ID
 } = process.env
 
 const appointmentTypesMap = {
-  COACH_SESSION: CLINIKO_COACH_SESSION_ID,
-  IMPRINT_INTERVIEW: CLINIKO_IMPRINT_INTERVIEW_ID,
-  THERAPY_SESSION: CLINIKO_THERAPY_SESSION_ID
+  COACHING: CLINIKO_COACHING_ID,
+  CONSULT_INTERVIEW: CLINIKO_CONSULT_INTERVIEW_ID,
+  THERAPY: CLINIKO_THERAPY_ID
 }
 
 export const schema = {
@@ -44,7 +44,7 @@ export const enumToId = type => Number(appointmentTypesMap[type])
 /**
  * Fetches Cliniko appointments for a patient by email and appointment type
  *
- * @param {String} type Appointment type enum e.g. 'IMPRINT_INTERVIEW'
+ * @param {String} type Appointment type enum e.g. 'CONSULT_INTERVIEW'
  * @param {String} email Email address of patient
  * @return {Array} Appointments of that type for that patient
  */

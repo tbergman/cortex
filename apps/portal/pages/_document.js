@@ -37,7 +37,7 @@ export default class Doc extends Document {
               #container {
                 max-width: 375px;
                 margin: auto;
-                padding-top: ${navHeight + margins.m}px;
+                padding: ${navHeight + margins.m}px 0 100px 0;
               }
             `}
           </style>

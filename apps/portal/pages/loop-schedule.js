@@ -18,6 +18,37 @@ export default class LoopSchedule extends React.Component {
           name
           signupStage
         }
+        intro: contentModule(name: "loopScheduleIntro") {
+          h1
+          p
+          a
+          images(width: 500 height: 500) {
+            url
+          }
+        }
+        halfway: contentModule(name: "loopScheduleHalfway") {
+          h1
+          a
+          images(width: 500 height: 500) {
+            url
+          }
+        }
+        billing: contentModule(name: "loopScheduleBilling") {
+          h1
+          p
+          a
+          images(width: 500 height: 500) {
+            url
+          }
+        }
+        final: contentModule(name: "loopScheduleFinal") {
+          h1
+          p
+          a
+          images(width: 500 height: 500) {
+            url
+          }
+        }
       }`
     )
     return { ...data, leadId: query.leadId }
@@ -30,10 +61,7 @@ export default class LoopSchedule extends React.Component {
         type: 'COACHING'
       })
       this.setState({
-        step:
-          this.props.lead.signupStage === 'SCHEDULING_COACHING'
-            ? 'Billing'
-            : 'TherapySchedule'
+        step: 'CoachConfirm'
       })
     } else if (this.state.step === 'TherapySchedule') {
       await Appointment.pollForAdded({
@@ -60,9 +88,11 @@ export default class LoopSchedule extends React.Component {
   renderInit () {
     return (
       <div>
-        Init
+        <img src={this.props.intro.images[0].url} />
+        <h1>{this.props.intro.h1}</h1>
+        <p>{this.props.intro.p}</p>
         {this.renderNextButton(
-          'Next',
+          this.props.intro.a[0],
           this.props.lead.signupStage === 'SCHEDULING_THERAPY'
             ? 'TherapySchedule'
             : 'CoachSchedule'
@@ -95,6 +125,21 @@ export default class LoopSchedule extends React.Component {
     return (
       <div>
         Coach Confirm
+        {this.renderNextButton(
+          'Next',
+          this.props.lead.signupStage === 'SCHEDULING_COACHING'
+            ? 'Billing'
+            : 'Halfway'
+        )}
+      </div>
+    )
+  }
+
+  renderHalfway () {
+    return (
+      <div>
+        <img src={this.props.halfway.images[0].url} />
+        <h1>{this.props.halfway.h1}</h1>
         {this.renderNextButton('Next', 'TherapySchedule')}
       </div>
     )
@@ -133,23 +178,27 @@ export default class LoopSchedule extends React.Component {
   renderBilling () {
     return (
       <div>
-        Billing
-        {this.renderNextButton('Next', 'FinalConfirm')}
+        <h1>{this.props.billing.h1}</h1>
+        <img src={this.props.billing.images[0].url} />
+        <p>{this.props.billing.p}</p>
+        {this.renderNextButton(this.props.billing.a[0], 'Final')}
       </div>
     )
   }
 
-  renderFinalConfirm () {
+  renderFinal () {
     return (
       <div>
-        Final Confirm
+        <h1>{this.props.final.h1}</h1>
+        <img src={this.props.final.images[0].url} />
+        <p>{this.props.final.p}</p>
         <Button
           fullWidth
           variant='contained'
           color='primary'
           onClick={() => Router.push('/')}
         >
-          Okay
+          {this.props.final.a}
         </Button>
       </div>
     )

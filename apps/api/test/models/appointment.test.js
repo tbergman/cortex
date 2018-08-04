@@ -29,7 +29,7 @@ test('findByTypeAndEmail finds appointment by type and email', async () => {
       ]
     }
   })
-  await Appointment.findByTypeAndEmail('IMPRINT_INTERVIEW', 'karen@horney.com')
+  await Appointment.findByTypeAndEmail('CONSULT_INTERVIEW', 'karen@horney.com')
   expect(superagent.query.mock.calls[0][0].q).toEqual('email:=karen@horney.com')
   expect(superagent.query.mock.calls[1][0].q).toContain('appointment_type_id:=')
   expect(superagent.get.mock.calls[2][0]).toContain('/appt/type')

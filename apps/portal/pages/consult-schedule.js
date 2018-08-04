@@ -7,7 +7,7 @@ import Router from 'next/router'
 const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
 const sleep = delay => new Promise(resolve => setTimeout(resolve, delay))
 
-export default class ImprintSchedule extends React.Component {
+export default class ConsultSchedule extends React.Component {
   state = {
     step: 0
   }
@@ -18,7 +18,7 @@ export default class ImprintSchedule extends React.Component {
         lead(id: "${query.leadId}") {
           name
         }
-        step0: contentModule(name: "imprintScheduleStep1") {
+        step0: contentModule(name: "consultScheduleStep1") {
           a
           h1
           p
@@ -26,17 +26,17 @@ export default class ImprintSchedule extends React.Component {
             url
           }
         }
-        step1: contentModule(name: "imprintScheduleStep2") {
+        step1: contentModule(name: "consultScheduleStep2") {
           a
           images(width: 480 height: 270) {
             url
           }
           p
         }
-        step2: contentModule(name: "imprintScheduleStep3") {
+        step2: contentModule(name: "consultScheduleStep3") {
           h1
         }
-        step3: contentModule(name: "imprintScheduleStep4") {
+        step3: contentModule(name: "consultScheduleStep4") {
           h1
           p
           a

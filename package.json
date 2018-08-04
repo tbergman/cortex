@@ -48,7 +48,9 @@
     "next": "^6.1.1",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-stripe-checkout": "^2.6.3",
     "sharp": "^0.20.5",
+    "stripe": "^6.7.0",
     "superagent": "^3.8.3",
     "twilio": "^3.18.0"
   },

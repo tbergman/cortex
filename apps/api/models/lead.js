@@ -1,5 +1,5 @@
 /**
- * A lead is a person before they become and Octave user.
+ * A lead is a person before they become an Octave user.
  * These are collected by lead gen web forms and are stored in Airtable.
  */
 import * as at from 'at'

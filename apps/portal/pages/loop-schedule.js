@@ -1,14 +1,21 @@
+import { GraphQLClient } from 'graphql-request'
+import * as Appointment from '../lib/appointment'
 import Button from 'components/button'
 import React from 'react'
 import Router from 'next/router'
-import * as Appointment from '../lib/appointment'
-import { GraphQLClient } from 'graphql-request'
+import StripeCheckout from 'react-stripe-checkout'
 
-const gql = new GraphQLClient(process.env.APP_URL + '/api')
+// TODO: Contribute to babel plugin to support destructuring
+const APP_URL = process.env.APP_URL
+const STRIPE_PUBLISHABLE_TOKEN = process.env.STRIPE_PUBLISHABLE_TOKEN
+const CLINIKO_COACHING_CALENDAR_URL = process.env.CLINIKO_COACHING_CALENDAR_URL
+const CLINIKO_THERAPY_CALENDAR_URL = process.env.CLINIKO_THERAPY_CALENDAR_URL
+
+const gql = new GraphQLClient(APP_URL + '/api')
 
 export default class LoopSchedule extends React.Component {
   state = {
-    step: 'Init'
+    step: 'Billing'
   }
 
   static async getInitialProps ({ query }) {
@@ -105,7 +112,7 @@ export default class LoopSchedule extends React.Component {
     return (
       <div>
         <iframe
-          src={process.env.CLINIKO_COACHING_CALENDAR_URL}
+          src={CLINIKO_COACHING_CALENDAR_URL}
           frameBorder='0'
           scrolling='auto'
         />
@@ -149,7 +156,7 @@ export default class LoopSchedule extends React.Component {
     return (
       <div>
         <iframe
-          src={process.env.CLINIKO_THERAPY_CALENDAR_URL}
+          src={CLINIKO_THERAPY_CALENDAR_URL}
           frameBorder='0'
           scrolling='auto'
         />
@@ -179,6 +186,10 @@ export default class LoopSchedule extends React.Component {
     return (
       <div>
         <h1>{this.props.billing.h1}</h1>
+        <StripeCheckout
+          token={console.log.bind(console)}
+          stripeKey={STRIPE_PUBLISHABLE_TOKEN}
+        />
         <img src={this.props.billing.images[0].url} />
         <p>{this.props.billing.p}</p>
         {this.renderNextButton(this.props.billing.a[0], 'Final')}

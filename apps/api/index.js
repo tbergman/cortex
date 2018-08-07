@@ -8,6 +8,7 @@ import resizer from './lib/resizer'
 import * as Lead from './models/lead'
 import * as ContentModule from './models/content-module'
 import * as Appointment from './models/appointment'
+import * as Practitioner from './models/practitioner'
 import * as TreatmentNote from './models/treatment-note'
 
 const app = express()
@@ -17,10 +18,11 @@ app.get('/api/image', resizer)
 
 // Compose GraphQL types from models
 const typeDefs = gql`
-${Lead.schema.types}
-${ContentModule.schema.types}
-${Appointment.schema.types}
-${TreatmentNote.schema.types}
+  ${Lead.schema.types}
+  ${ContentModule.schema.types}
+  ${Appointment.schema.types}
+  ${Practitioner.schema.types}
+  ${TreatmentNote.schema.types}
   type Mutation {
     ${Lead.schema.mutations}
     ${TreatmentNote.schema.mutations}

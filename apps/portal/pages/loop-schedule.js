@@ -15,7 +15,7 @@ const gql = new GraphQLClient(APP_URL + '/api')
 
 export default class LoopSchedule extends React.Component {
   state = {
-    step: 'Billing'
+    step: 'Init'
   }
 
   static async getInitialProps ({ query }) {
@@ -63,19 +63,23 @@ export default class LoopSchedule extends React.Component {
 
   async componentDidUpdate () {
     if (this.state.step === 'CoachSchedule') {
-      await Appointment.pollForAdded({
+      const appointment = await Appointment.pollForAdded({
         leadId: this.props.leadId,
-        type: 'COACHING'
+        category: 'COACHING'
       })
       this.setState({
-        step: 'CoachConfirm'
+        step: 'CoachConfirm',
+        confirmedAppointment: appointment
       })
     } else if (this.state.step === 'TherapySchedule') {
-      await Appointment.pollForAdded({
+      const appointment = await Appointment.pollForAdded({
         leadId: this.props.leadId,
-        type: 'THERAPY'
+        category: 'THERAPY'
       })
-      this.setState({ step: 'TherapyConfirm' })
+      this.setState({
+        step: 'TherapyConfirm',
+        confirmedAppointment: appointment
+      })
     }
   }
 
@@ -128,10 +132,23 @@ export default class LoopSchedule extends React.Component {
     )
   }
 
+  renderConfirmedAppoinment () {
+    return (
+      <div>
+        <h3>Confirmed for:</h3>
+        <h1>{this.state.confirmedAppointment.type.name}</h1>
+        <h2>{this.state.confirmedAppointment.type.rate.amount}</h2>
+        <h4>{this.state.confirmedAppointment.startAt}</h4>
+        <h5>{this.state.confirmedAppointment.practitioner.name}</h5>
+        <p>{this.state.confirmedAppointment.practitioner.description}</p>
+      </div>
+    )
+  }
+
   renderCoachConfirm () {
     return (
       <div>
-        Coach Confirm
+        {this.renderConfirmedAppoinment()}
         {this.renderNextButton(
           'Next',
           this.props.lead.signupStage === 'SCHEDULING_COACHING'
@@ -176,7 +193,7 @@ export default class LoopSchedule extends React.Component {
   renderTherapyConfirm () {
     return (
       <div>
-        Therapy Confirm
+        {this.renderConfirmedAppoinment()}
         {this.renderNextButton('Next', 'Billing')}
       </div>
     )

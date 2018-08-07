@@ -56,7 +56,7 @@ export default class ConsultSchedule extends React.Component {
   pollForConsultInterviewAdded = async () => {
     await Appointment.pollForAdded({
       leadId: this.props.leadId,
-      type: 'CONSULT_INTERVIEW'
+      category: 'CONSULT'
     })
     await gql.request(
       `mutation {

@@ -9,7 +9,7 @@ jest.mock('cliniko', () => ({
   findOrCreate: jest.fn()
 }))
 jest.mock('../../models/appointment', () => ({
-  findByTypeAndEmail: jest.fn()
+  findForEmail: jest.fn()
 }))
 
 test('toAirtable transforms args to an airtable schema', () => {
@@ -44,9 +44,8 @@ test('createLead adds a lead to Airtable', async () => {
 
 test('appointments finds appointments by type for a lead', async () => {
   await Lead.appointments({ email: 'karen@horney.com' })({
-    type: 'CONSULT_INTERVIEW'
+    category: 'CONSULT'
   })
-  const args = Appointment.findByTypeAndEmail.mock.calls[0]
-  expect(args[0]).toEqual('CONSULT_INTERVIEW')
-  expect(args[1]).toEqual('karen@horney.com')
+  const args = Appointment.findForEmail.mock.calls[0]
+  expect(args[0]).toEqual('karen@horney.com')
 })

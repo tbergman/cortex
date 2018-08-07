@@ -10,6 +10,7 @@ import * as ContentModule from './models/content-module'
 import * as Appointment from './models/appointment'
 import * as Practitioner from './models/practitioner'
 import * as TreatmentNote from './models/treatment-note'
+import * as Client from './models/client'
 
 const app = express()
 
@@ -18,17 +19,18 @@ app.get('/api/image', resizer)
 
 // Compose GraphQL types from models
 const typeDefs = gql`
-  ${Lead.schema.types}
-  ${ContentModule.schema.types}
   ${Appointment.schema.types}
+  ${Client.schema.types}
+  ${ContentModule.schema.types}
+  ${Lead.schema.types}
   ${Practitioner.schema.types}
   ${TreatmentNote.schema.types}
   type Mutation {
+    ${Client.schema.mutations}
     ${Lead.schema.mutations}
     ${TreatmentNote.schema.mutations}
   }
   type Query {
-    ping: String
     ${ContentModule.schema.queries}
     ${Lead.schema.queries}
     ${TreatmentNote.schema.queries}
@@ -38,12 +40,12 @@ const typeDefs = gql`
 // Compose GraphQL resolvers from models
 const resolvers = {
   Mutation: {
-    ...Lead.mutations,
+    ...Client.mutations,
     ...ContentModule.mutations,
+    ...Lead.mutations,
     ...TreatmentNote.mutations
   },
   Query: {
-    ping: () => 'pong',
     ...Lead.queries,
     ...ContentModule.queries,
     ...TreatmentNote.queries

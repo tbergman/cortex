@@ -7,7 +7,7 @@ import StripeCheckout from 'react-stripe-checkout'
 
 // TODO: Contribute to babel plugin to support destructuring
 const APP_URL = process.env.APP_URL
-const STRIPE_PUBLISHABLE_TOKEN = process.env.STRIPE_PUBLISHABLE_TOKEN
+const STRIPE_PUBLISHABLE = process.env.STRIPE_PUBLISHABLE
 const CLINIKO_COACHING_CALENDAR_URL = process.env.CLINIKO_COACHING_CALENDAR_URL
 const CLINIKO_THERAPY_CALENDAR_URL = process.env.CLINIKO_THERAPY_CALENDAR_URL
 
@@ -15,7 +15,7 @@ const gql = new GraphQLClient(APP_URL + '/api')
 
 export default class LoopSchedule extends React.Component {
   state = {
-    step: 'Init'
+    step: 'Billing'
   }
 
   static async getInitialProps ({ query }) {
@@ -81,6 +81,22 @@ export default class LoopSchedule extends React.Component {
         confirmedAppointment: appointment
       })
     }
+  }
+
+  onStripeToken = async token => {
+    await gql.request(
+      `
+      mutation {
+        createClientFromLead(
+          leadId: "${this.props.leadId}"
+          stripeSource: "${token.id}"
+        ) {
+        name
+        }
+      }
+    `
+    )
+    this.setState({ step: 'Final' })
   }
 
   renderNextButton (text, step) {
@@ -203,13 +219,12 @@ export default class LoopSchedule extends React.Component {
     return (
       <div>
         <h1>{this.props.billing.h1}</h1>
-        <StripeCheckout
-          token={console.log.bind(console)}
-          stripeKey={STRIPE_PUBLISHABLE_TOKEN}
-        />
         <img src={this.props.billing.images[0].url} />
         <p>{this.props.billing.p}</p>
-        {this.renderNextButton(this.props.billing.a[0], 'Final')}
+        <StripeCheckout
+          token={this.onStripeToken}
+          stripeKey={STRIPE_PUBLISHABLE}
+        />
       </div>
     )
   }

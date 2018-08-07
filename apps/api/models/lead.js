@@ -69,9 +69,14 @@ export const toCliniko = args => ({
 
 export const appointments = lead => args => Appointment.findForEmail(lead.email)
 
-export const lead = async (_root, args) => {
-  const record = await at.findOne({ table: 'leads', id: args.id })
+export const findById = async id => {
+  const record = await at.findOne({ table: 'leads', id })
   const lead = fromAirtable(record)
+  return lead
+}
+
+export const lead = async (_root, args) => {
+  const lead = await findById(args.id)
   return { ...lead, appointments: appointments(lead) }
 }
 

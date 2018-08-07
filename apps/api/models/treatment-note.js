@@ -57,18 +57,18 @@ export const schema = {
     createTreatmentNote(
       email: String!
       content: TreatmentNoteInputContent!
-      appointmentType: AppointmentType!
+      appointmentTypeCategory: AppointmentTypeCategory!
     ): TreatmentNote
   `,
   queries: `
     treatmentNoteTemplate(
-      appointmentType: AppointmentType!
+      appointmentTypeCategory: AppointmentTypeCategory!
     ): TreatmentNoteTemplate
   `
 }
 
 const treatmentNoteTemplate = async (_root, args) => {
-  const apptTypeId = Appointment.enumToId(args.appointmentType)
+  const apptTypeId = Appointment.enumToId(args.appointmentTypeCategory)
   const apptType = await cliniko.find({
     resource: `appointment_types/${apptTypeId}`
   })
@@ -79,8 +79,8 @@ const treatmentNoteTemplate = async (_root, args) => {
 }
 
 const createTreatmentNote = async (_root, args) => {
-  const title = _.capitalize(args.appointmentType.split('_').join(' '))
-  const apptTypeId = Appointment.enumToId(args.appointmentType)
+  const title = _.capitalize(args.appointmentTypeCategory.split('_').join(' '))
+  const apptTypeId = Appointment.enumToId(args.appointmentTypeCategory)
   const [patient] = await cliniko.find({
     resource: 'patients',
     q: `email:=${args.email}`

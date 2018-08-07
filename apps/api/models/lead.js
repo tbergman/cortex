@@ -33,7 +33,7 @@ export const schema = {
     }
     type Lead {
       ${fields('read')}
-      appointments(type: AppointmentType!): [Appointment]
+      appointments: [Appointment]
     }
   `,
   queries: `
@@ -67,8 +67,7 @@ export const toCliniko = args => ({
   email: args.email
 })
 
-export const appointments = lead => args =>
-  Appointment.findByTypeAndEmail(args.type, lead.email)
+export const appointments = lead => args => Appointment.findForEmail(lead.email)
 
 export const lead = async (_root, args) => {
   const record = await at.findOne({ table: 'leads', id: args.id })

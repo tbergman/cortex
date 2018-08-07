@@ -20,7 +20,7 @@ export default class Assessment extends React.Component {
       .join('_')
     const { treatmentNoteTemplate, confirmationContent } = await gql.request(
       `query {
-        treatmentNoteTemplate(appointmentType: ${apptType}) {
+        treatmentNoteTemplate(appointmentTypeCategory: ${apptType}) {
           name
           content {
             sections {
@@ -60,7 +60,7 @@ export default class Assessment extends React.Component {
         createTreatmentNote(
           email: "${this.props.email}"
           content: $content
-          appointmentType: CONSULT_INTERVIEW
+          appointmentTypeCategory: CONSULT_INTERVIEW
         ) {
           name
         }

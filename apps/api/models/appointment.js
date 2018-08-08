@@ -13,14 +13,14 @@ export const schema = {
       amount: Float
     }
     type AppointmentType {
-      id: ID!
+      id: ID
       name: String
       category: AppointmentTypeCategory
       rate: AppointmentTypeRate
     }
     type Appointment {
       endAt: String
-      id: ID!
+      id: ID
       startAt: String
       type: AppointmentType
       practitioner: Practitioner
@@ -30,10 +30,14 @@ export const schema = {
       CONSULT
       THERAPY
     }
+  `,
+  mutations: `
+    deleteAppointment(id: ID!): Appointment
   `
 }
 
 export const fromCliniko = appt => ({
+  id: appt.id,
   endAt: appt.ends_at,
   startAt: appt.starts_at,
   type: async () => {
@@ -44,6 +48,7 @@ export const fromCliniko = appt => ({
       name: apptType.name,
       category: apptType.category.toUpperCase(),
       rate: async () => {
+        if (!apptType.billable_item) return null
         const item = await cliniko.find({
           url: apptType.billable_item.links.self
         })
@@ -73,4 +78,11 @@ export const findForEmail = async email => {
     url: patient.appointments.links.self
   })
   return appointments.map(fromCliniko)
+}
+
+export const deleteAppointment = async (_root, args) =>
+  fromCliniko(await cliniko.destroy({ resource: 'appointments', id: args.id }))
+
+export const mutations = {
+  deleteAppointment
 }

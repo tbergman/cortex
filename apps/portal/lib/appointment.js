@@ -19,6 +19,7 @@ export const pollForAdded = async ({ leadId, category }) => {
       lead(id: "${leadId}") {
         name
         appointments {
+          id
           startAt
           practitioner {
             name

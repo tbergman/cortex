@@ -15,7 +15,7 @@ const gql = new GraphQLClient(APP_URL + '/api')
 
 export default class LoopSchedule extends React.Component {
   state = {
-    step: 'Billing'
+    step: 'Init'
   }
 
   static async getInitialProps ({ query }) {
@@ -99,6 +99,17 @@ export default class LoopSchedule extends React.Component {
     this.setState({ step: 'Final' })
   }
 
+  cancelConfirmedAppointment = async () => {
+    this.setState({ step: this.state.step.replace('Confirm', 'Schedule') })
+    await gql.request(
+      `mutation {
+        deleteAppointment(id: "${this.state.confirmedAppointment.id}") {
+          id
+        }
+      }`
+    )
+  }
+
   renderNextButton (text, step) {
     return (
       <Button
@@ -157,6 +168,7 @@ export default class LoopSchedule extends React.Component {
         <h4>{this.state.confirmedAppointment.startAt}</h4>
         <h5>{this.state.confirmedAppointment.practitioner.name}</h5>
         <p>{this.state.confirmedAppointment.practitioner.description}</p>
+        <Button onClick={this.cancelConfirmedAppointment}>Cancel</Button>
       </div>
     )
   }

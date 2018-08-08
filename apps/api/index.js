@@ -29,6 +29,7 @@ const typeDefs = gql`
     ${Client.schema.mutations}
     ${Lead.schema.mutations}
     ${TreatmentNote.schema.mutations}
+    ${Appointment.schema.mutations}
   }
   type Query {
     ${ContentModule.schema.queries}
@@ -43,7 +44,8 @@ const resolvers = {
     ...Client.mutations,
     ...ContentModule.mutations,
     ...Lead.mutations,
-    ...TreatmentNote.mutations
+    ...TreatmentNote.mutations,
+    ...Appointment.mutations
   },
   Query: {
     ...Lead.queries,

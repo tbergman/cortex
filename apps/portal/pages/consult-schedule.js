@@ -84,7 +84,7 @@ export default class ConsultSchedule extends React.Component {
         onClick={this.nextStep}
         disabled={
           this.state.disabledNext &&
-            this.state.consentedNum <= this.props.consent.li.length - 1
+          this.state.consentedNum <= this.props.consent.li.length - 1
         }
       >
         {text}
@@ -141,7 +141,8 @@ export default class ConsultSchedule extends React.Component {
         <ul>
           {this.props.consent.li.map(text => (
             <li key={text}>
-              {text}<input onChange={onCheck} type='checkbox' />
+              {text}
+              <input onChange={onCheck} type='checkbox' />
             </li>
           ))}
         </ul>

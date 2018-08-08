@@ -100,7 +100,12 @@ export const airtableToModel = record => {
     .get()
   const pEls = $('body > p')
     .map((i, el) => {
-      const text = $(el).clone().children().remove().end().text()
+      const text = $(el)
+        .clone()
+        .children()
+        .remove()
+        .end()
+        .text()
       return { tag: $(el).get(0).tagName, text }
     })
     .get()
@@ -115,7 +120,8 @@ export const airtableToModel = record => {
   }, {})
   const images = args => {
     return record.images.map(image => ({
-      url: `${APP_URL}/api/image?` +
+      url:
+        `${APP_URL}/api/image?` +
         qs.stringify({
           url: image.url,
           width: args.width,

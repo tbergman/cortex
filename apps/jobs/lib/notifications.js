@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt'
 import * as at from 'at'
 import mailgun from 'mailgun-js'
 import marked from 'marked'
+import _ from 'lodash'
 
 const {
   EMAIL_FROM_ADDRESS,
@@ -37,12 +38,20 @@ const notificationContent = async notificationName => {
   }
 }
 
-const sendSMS = async (notificationName, phoneNum) => {
+const replaceVariables = (copy, variables) =>
+  _.reduce(
+    variables,
+    (copy, val, key) => copy.replace(new RegExp(`{{${key}}}`, 'g'), val),
+    copy
+  )
+
+const sendSMS = async ({ notificationName, phoneNum, variables }) => {
   const identity = (await bcrypt.hash(phoneNum, TWILIO_BCRYPT_SALT)).replace(
     /[\W_]+/g,
     ''
   )
-  const { sms: body } = await notificationContent(notificationName)
+  const { sms } = await notificationContent(notificationName)
+  const body = replaceVariables(sms, variables)
   await twil.notify.services(TWILIO_SERVICE_SID).bindings.create({
     identity,
     bindingType: 'sms',
@@ -54,13 +63,14 @@ const sendSMS = async (notificationName, phoneNum) => {
   })
 }
 
-const sendEmail = async (notificationName, email) => {
+const sendEmail = async ({ notificationName, email, variables }) => {
   const { subject, body } = await notificationContent(notificationName)
+  const html = replaceVariables(marked.parse(body || ''), variables)
   await mgun.messages().send({
     from: EMAIL_FROM_ADDRESS,
     to: email,
     subject,
-    html: marked.parse(body || '')
+    html
   })
 }
 
@@ -68,28 +78,33 @@ const sendEmail = async (notificationName, email) => {
  * Finds leads in Airtable and sends them an SMS + email notification from
  * the copy also managed in Airtable.
  *
- * @param {String} signupStage signupStage value in Airtable
- * @param {String} [notificationName=signupStage] Name in Airtable
+ * @param {Object} options
+ * @param {String} options.filter Airtable filter formula
+ * @param {String} options.notificationName Notification name in Airtable
+ * @param {Function} options.variables Function that returns map of mustache variables to inject
  */
-export const sendToleads = async (
-  signupStage,
-  notificationName = signupStage
-) => {
+export const sendToleads = async ({
+  notificationName,
+  filter,
+  variables = () => {}
+}) => {
   const leads = await at.find({
     table: 'leads',
-    filter: `{Signup Stage} = '${signupStage}'`
+    filter
   })
   const phoneNums = await Promise.all(
     leads.map(async lead => {
       const phoneNum = '+1' + lead['Phone Number'].replace(/[\W_]+/g, '')
       await Promise.all([
-        sendSMS(notificationName, phoneNum),
-        sendEmail(notificationName, lead['Email Address'])
+        sendSMS({ notificationName, phoneNum, variables: variables(lead) }),
+        sendEmail({
+          notificationName,
+          email: lead['Email Address'],
+          variables: variables(lead)
+        })
       ])
       return phoneNum
     })
   )
-  console.log(
-    `📬  "${signupStage}" notifications sent to ${phoneNums.join(', ')}!`
-  )
+  console.log(`📬  Notifications sent to ${phoneNums.join(', ')}!`)
 }

@@ -10,7 +10,7 @@ jest.mock('airtable', () => {
           fields: {
             sms: 'Yo! World',
             emailSubject: 'Hello World',
-            emailBody: 'Well hello there world, how are you today',
+            emailBody: 'Well hello there {{world}}, how are you today',
             'Email Address': 'karen@horney.com',
             'Phone Number': '(555)-123-4567'
           }
@@ -46,15 +46,23 @@ jest.mock('mailgun-js', () => () => ({
 }))
 
 test(`sendToleads sends onboarding leads a welcome SMS`, async () => {
-  await sendToleads()
+  await sendToleads({})
   expect(twilioMsg).toMatchObject({ identity: 'abc123', body: 'Yo! World' })
   expect(twilioBindingPhoneNum).toEqual('+15551234567')
 })
 
-test.only(`sendToleads sends onboarding leads a welcome email`, async () => {
-  await sendToleads()
+test(`sendToleads sends onboarding leads a welcome email`, async () => {
+  await sendToleads({})
   expect(mailgunMsg.html).toMatch(
-    '<p>Well hello there world, how are you today</p>'
+    '<p>Well hello there {{world}}, how are you today</p>'
+  )
+  expect(mailgunMsg.to).toEqual('karen@horney.com')
+})
+
+test(`sendToleads replaces variables in copy`, async () => {
+  await sendToleads({ variables: () => ({ world: 'Earth' }) })
+  expect(mailgunMsg.html).toMatch(
+    '<p>Well hello there Earth, how are you today</p>'
   )
   expect(mailgunMsg.to).toEqual('karen@horney.com')
 })

@@ -57,10 +57,9 @@ const tags = [
   'h4',
   'h5',
   'h6',
-  'ol',
+  'li',
   'p',
-  'strong',
-  'ul'
+  'strong'
 ]
 
 export const schema = {
@@ -101,23 +100,22 @@ export const airtableToModel = record => {
     .get()
   const pEls = $('body > p')
     .map((i, el) => {
-      const text = $(el)
-        .clone()
-        .children()
-        .remove()
-        .end()
-        .text()
+      const text = $(el).clone().children().remove().end().text()
       return { tag: $(el).get(0).tagName, text }
     })
     .get()
-  const els = [...rootEls, ...pWrappedEls, ...pEls]
+  const liEls = $('body > ul > li, body > ol > li')
+    .map((i, el) => {
+      return { tag: $(el).get(0).tagName, text: $(el).text() }
+    })
+    .get()
+  const els = [...rootEls, ...pWrappedEls, ...pEls, ...liEls]
   const copy = els.reduce((acc, { tag, text }) => {
     return { ...acc, [tag]: [...(acc[tag] || []), _.trim(text)] }
   }, {})
   const images = args => {
     return record.images.map(image => ({
-      url:
-        `${APP_URL}/api/image?` +
+      url: `${APP_URL}/api/image?` +
         qs.stringify({
           url: image.url,
           width: args.width,

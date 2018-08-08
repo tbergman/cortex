@@ -9,7 +9,9 @@ const gql = new GraphQLClient(process.env.APP_URL + '/api', { headers: {} })
 
 export default class ConsultSchedule extends React.Component {
   state = {
-    step: 0
+    step: 0,
+    disabledNext: false,
+    consentedNum: 0
   }
 
   static async getInitialProps ({ query }) {
@@ -18,39 +20,36 @@ export default class ConsultSchedule extends React.Component {
         lead(id: "${query.leadId}") {
           name
         }
-        step0: contentModule(name: "consultScheduleStep1") {
-          a
-          h1
-          p
-          images(width: 480 height: 270) {
-            url
-          }
-        }
-        step1: contentModule(name: "consultScheduleStep2") {
+        welcome: contentModule(name: "consultScheduleWelcome") {
           a
           images(width: 480 height: 270) {
             url
           }
           p
         }
-        step2: contentModule(name: "consultScheduleStep3") {
+        calendar: contentModule(name: "consultScheduleCalendar") {
           h1
         }
-        step3: contentModule(name: "consultScheduleStep4") {
+        confirmation: contentModule(name: "consultScheduleConfirmation") {
           h1
           p
           a
           images(width: 480 height: 270) {
             url
           }
+        }
+        consent: contentModule(name: "consultScheduleConsent") {
+          li
+          h1
+          p
         }
       }`
     )
     return { ...data, leadId: query.leadId }
   }
 
-  componentDidMount () {
-    this.pollForConsultInterviewAdded()
+  componentDidUpdate () {
+    if (this.state.step === 1) this.pollForConsultInterviewAdded()
   }
 
   pollForConsultInterviewAdded = async () => {
@@ -66,11 +65,14 @@ export default class ConsultSchedule extends React.Component {
         ) { name }
       }`
     )
-    this.setState({ step: 3 })
+    this.nextStep()
   }
 
   nextStep = () => {
-    this.setState({ step: this.state.step + 1 })
+    this.setState({
+      step: this.state.step + 1,
+      disabledNext: this.state.step === 1
+    })
   }
 
   renderNextButton (text) {
@@ -80,6 +82,10 @@ export default class ConsultSchedule extends React.Component {
         variant='contained'
         color='primary'
         onClick={this.nextStep}
+        disabled={
+          this.state.disabledNext &&
+            this.state.consentedNum <= this.props.consent.li.length - 1
+        }
       >
         {text}
       </Button>
@@ -89,14 +95,10 @@ export default class ConsultSchedule extends React.Component {
   renderStep0 () {
     return (
       <div>
-        <h1>{this.props.step0.h1}</h1>
-        <img src={this.props.step0.images[0].url} />
-        <p>{this.props.step0.p}</p>
-        {this.renderNextButton(this.props.step0.a)}
+        <img src={this.props.welcome.images[0].url} />
+        <p>{this.props.welcome.p}</p>
+        {this.renderNextButton(this.props.welcome.a)}
         <style jsx>{`
-          h1 {
-            ${type.estebanL} margin-bottom: ${margins.m}px;
-          }
           p {
             ${type.apercuM} margin: ${margins.m}px 0;
           }
@@ -108,22 +110,7 @@ export default class ConsultSchedule extends React.Component {
   renderStep1 () {
     return (
       <div>
-        <img src={this.props.step1.images[0].url} />
-        <p>{this.props.step1.p}</p>
-        {this.renderNextButton(this.props.step1.a)}
-        <style jsx>{`
-          p {
-            ${type.apercuM} margin: ${margins.m}px 0;
-          }
-        `}</style>
-      </div>
-    )
-  }
-
-  renderStep2 () {
-    return (
-      <div>
-        <h1>{this.props.step2.h1}</h1>
+        <h1>{this.props.calendar.h1}</h1>
         <iframe
           src={process.env.CLINIKO_CONSULT_CALENDAR_URL}
           frameBorder='0'
@@ -142,19 +129,49 @@ export default class ConsultSchedule extends React.Component {
     )
   }
 
+  renderStep2 () {
+    const onCheck = e => {
+      const dir = e.target.checked ? 1 : -1
+      this.setState({ consentedNum: this.state.consentedNum + dir })
+    }
+    return (
+      <div>
+        <h1>{this.props.consent.h1}</h1>
+        <p>{this.props.consent.p}</p>
+        <ul>
+          {this.props.consent.li.map(text => (
+            <li key={text}>
+              {text}<input onChange={onCheck} type='checkbox' />
+            </li>
+          ))}
+        </ul>
+        {this.renderNextButton('Next')}
+      </div>
+    )
+  }
+
   renderStep3 () {
     return (
       <div>
-        <h1>{this.props.step3.h1}</h1>
-        <img src={this.props.step3.images[0].url} />
-        <p>{this.props.step3.p}</p>
+        <h1>Quick Assessment</h1>
+        {this.renderNextButton('Next')}
+      </div>
+    )
+  }
+
+  renderStep4 () {
+    return (
+      <div>
+        <h1>{this.props.confirmation.h1}</h1>
+        <img src={this.props.confirmation.images[0].url} />
+        <p>{this.props.confirmation.p}</p>
         <Button
           fullWidth
           variant='contained'
           color='primary'
           onClick={() => Router.push('/')}
         >
-          {this.props.step3.a}
+          {this.props.confirmation.a}
         </Button>
         <style jsx>{`
           h1 {

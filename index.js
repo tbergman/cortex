@@ -3,7 +3,7 @@ import { createReloadable } from '@artsy/express-reloadable'
 import { dirToMiddleware } from 'next-to-express'
 import express from 'express'
 import path from 'path'
-if (process.env.NODE_ENV === 'development') envenc(process.env.CORTEX_ENV_KEY)
+if (process.env.NODE_ENV !== 'production') envenc(process.env.CORTEX_ENV_KEY)
 
 const { PORT, NODE_ENV } = process.env
 const app = express()

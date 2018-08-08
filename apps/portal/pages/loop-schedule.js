@@ -1,6 +1,7 @@
 import { GraphQLClient } from 'graphql-request'
 import * as Appointment from '../lib/appointment'
 import Button from 'components/button'
+import moment from 'moment'
 import React from 'react'
 import Router from 'next/router'
 import StripeCheckout from 'react-stripe-checkout'
@@ -29,22 +30,23 @@ export default class LoopSchedule extends React.Component {
           h1
           p
           a
-          images(width: 500 height: 500) {
+          images(width: 500 height: 400) {
             url
           }
         }
         halfway: contentModule(name: "loopScheduleHalfway") {
           h1
           a
-          images(width: 500 height: 500) {
+          images(width: 500 height: 400) {
             url
           }
         }
         billing: contentModule(name: "loopScheduleBilling") {
           h1
+          h2
           p
           a
-          images(width: 500 height: 500) {
+          images(width: 500 height: 400) {
             url
           }
         }
@@ -53,6 +55,11 @@ export default class LoopSchedule extends React.Component {
           p
           a
           images(width: 500 height: 500) {
+            url
+          }
+        }
+        confirmed: contentModule(name: "loopScheduleConfirmed") {
+          images(width: 500 height: 400) {
             url
           }
         }
@@ -126,8 +133,8 @@ export default class LoopSchedule extends React.Component {
   renderInit () {
     return (
       <div>
-        <img src={this.props.intro.images[0].url} />
         <h1>{this.props.intro.h1}</h1>
+        <img src={this.props.intro.images[0].url} />
         <p>{this.props.intro.p}</p>
         {this.renderNextButton(
           this.props.intro.a[0],
@@ -160,15 +167,25 @@ export default class LoopSchedule extends React.Component {
   }
 
   renderConfirmedAppoinment () {
+    const i = this.state.step === 'CoachConfirm' ? 0 : 1
+    const src = this.props.confirmed.images[i].url
     return (
       <div>
-        <h3>Confirmed for:</h3>
-        <h1>{this.state.confirmedAppointment.type.name}</h1>
-        <h2>{this.state.confirmedAppointment.type.rate.amount}</h2>
-        <h4>{this.state.confirmedAppointment.startAt}</h4>
-        <h5>{this.state.confirmedAppointment.practitioner.name}</h5>
-        <p>{this.state.confirmedAppointment.practitioner.description}</p>
-        <Button onClick={this.cancelConfirmedAppointment}>Cancel</Button>
+        <small>Confirmed for:</small>
+        <h1>
+          {this.state.confirmedAppointment.type.name}&nbsp;
+        </h1>
+        <img src={src} />
+        <h3>
+          💰 ${this.state.confirmedAppointment.type.rate.amount}/session<br />
+          📅
+          {' '}
+          {moment(this.state.confirmedAppointment.startAt).format('MMMM D')}
+          <br />
+          💼 {this.state.confirmedAppointment.practitioner.name}<br />
+          {this.state.confirmedAppointment.practitioner.description}
+        </h3>
+        <br />
       </div>
     )
   }
@@ -183,6 +200,7 @@ export default class LoopSchedule extends React.Component {
             ? 'Billing'
             : 'Halfway'
         )}
+        <Button onClick={this.cancelConfirmedAppointment}>Cancel</Button>
       </div>
     )
   }
@@ -205,7 +223,6 @@ export default class LoopSchedule extends React.Component {
           frameBorder='0'
           scrolling='auto'
         />
-        Therapy Schedule
         <style jsx>
           {`
             iframe {
@@ -223,6 +240,7 @@ export default class LoopSchedule extends React.Component {
       <div>
         {this.renderConfirmedAppoinment()}
         {this.renderNextButton('Next', 'Billing')}
+        <Button onClick={this.cancelConfirmedAppointment}>Cancel</Button>
       </div>
     )
   }
@@ -231,6 +249,7 @@ export default class LoopSchedule extends React.Component {
     return (
       <div>
         <h1>{this.props.billing.h1}</h1>
+        <h2>{this.props.billing.h2}</h2><br />
         <img src={this.props.billing.images[0].url} />
         <p>{this.props.billing.p}</p>
         <StripeCheckout
